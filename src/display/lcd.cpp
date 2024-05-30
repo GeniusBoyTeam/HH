@@ -15,11 +15,27 @@ Adafruit_ILI9341 *initDisplay(char rotate)
     return a;
 }
 
+void overWritePosition(EChar character ,double value)
+{
+    
+}
+
+void refresh(void)
+{
+    if (currentValues.x != lastValues.x)
+    {
+        lastValues.x = currentValues.x;
+        overWritePosition(X,currentValues.x);
+    }
+    
+}
+
 void displayTask(void *p)
 {
     initDisplay(2);
     while (true)
     {
+        refresh();
         vTaskDelay(1);
     }
 }

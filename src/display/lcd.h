@@ -12,6 +12,33 @@
 #define LCD_RST 35
 #define LCD_BACKLIGHT 41
 
+enum EChar
+{
+    X = 0,
+    Y = 1,
+    Z = 2,
+    A = 3,
+    F = 4
+};
+
+struct refreshVal
+{
+    double x;
+    double y;
+    double z;
+    double a;
+    double f;
+    int alarm;
+    int memoryMount;
+};
+
+struct stringProperties
+{
+
+};
+
+static refreshVal currentValues;
+static refreshVal lastValues;
 static Adafruit_ILI9341 *display = NULL;
 void displaySetup(void);
 Adafruit_ILI9341 *initDisplay(char rotate);

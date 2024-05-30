@@ -1,5 +1,10 @@
 #include "recieve.h"
 
+void parseRecieved(char *data)
+{
+    log_i("RECIEVED: %s", data);
+}
+
 void recieveTask(void *p)
 {
     const byte numChars = 150;
@@ -26,11 +31,10 @@ void recieveTask(void *p)
             }
             else
             {
-                log_i("RECIEVED: %s", receivedChars);
-                //Do something with recieved data...
-
+                // Do something with recieved data...
+                parseRecieved(receivedChars);
                 //..................................
-                receivedChars[ndx] = '\0'; 
+                receivedChars[ndx] = '\0';
                 ndx = 0;
                 newData = true;
             }
