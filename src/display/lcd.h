@@ -3,6 +3,10 @@
 
 #include <Arduino.h>
 #include <Adafruit_ILI9341.h>
+#include <Fonts/FreeSerifBold24pt7b.h>
+#include <Fonts/FreeSerifBold18pt7b.h>
+#include <iostream>
+#include <list>
 
 #define LCD_MOSI 39
 #define LCD_MISO 40
@@ -21,6 +25,19 @@ enum EChar
     F = 4
 };
 
+enum EState
+{
+    Alarm = 0,
+    Idle,
+    Jog,
+    Homing,
+    Check,
+    Cycle,
+    Hold,
+    Door,
+    Sleep
+};
+
 struct refreshVal
 {
     double x;
@@ -28,19 +45,19 @@ struct refreshVal
     double z;
     double a;
     double f;
-    int alarm;
+    int state;
     int memoryMount;
 };
 
 struct stringProperties
 {
-
 };
 
 static refreshVal currentValues;
 static refreshVal lastValues;
 static Adafruit_ILI9341 *display = NULL;
 void displaySetup(void);
+void drawMainTheme(void);
 Adafruit_ILI9341 *initDisplay(char rotate);
 
 #endif // HH_LCD
