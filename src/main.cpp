@@ -1,7 +1,5 @@
 #include "main.h"
 
-TaskFunction_t serialPortTask;
-
 void setup()
 {
   Serial.begin(115200);

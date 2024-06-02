@@ -1,5 +1,8 @@
 #include "lcd.h"
 
+refreshVal currentValues;
+refreshVal lastValues;
+
 Adafruit_ILI9341 *initDisplay(char rotate)
 {
     SPIClass *vspi = NULL;
@@ -32,43 +35,116 @@ void drawMainTheme(void)
     int startRects = 6;
     int roundRects = 5;
 
-    display->setTextColor(ILI9341_WHITE);
+    display->setTextColor(ILI9341_BLACK);
     display->setTextSize(1);
     display->setFont(&FreeSerifBold24pt7b);
-    display->fillRoundRect(5, convertLocation(startRects, gap, componentHeght, 0), componentHeght, componentHeght, roundRects, ILI9341_DARKGREY);
+    display->fillRoundRect(5, convertLocation(startRects, gap, componentHeght, 0), componentHeght, componentHeght, roundRects, ILI9341_YELLOW);
     display->setCursor(12, convertLocation(start, gap, componentHeght, 0));
     display->print("X");
-    display->fillRoundRect(5, convertLocation(startRects, gap, componentHeght, 1), componentHeght, componentHeght, roundRects, ILI9341_DARKGREY);
+    display->fillRoundRect(5, convertLocation(startRects, gap, componentHeght, 1), componentHeght, componentHeght, roundRects, ILI9341_YELLOW);
     display->setCursor(12, convertLocation(start, gap, componentHeght, 1));
     display->print("Y");
-    display->fillRoundRect(5, convertLocation(startRects, gap, componentHeght, 2), componentHeght, componentHeght, roundRects, ILI9341_RED);
+    display->fillRoundRect(5, convertLocation(startRects, gap, componentHeght, 2), componentHeght, componentHeght, roundRects, ILI9341_YELLOW);
     display->setCursor(12, convertLocation(start, gap, componentHeght, 2));
     display->print("Z");
-    display->fillRoundRect(5, convertLocation(startRects, gap, componentHeght, 3), componentHeght, componentHeght, roundRects, ILI9341_GREEN);
+    display->fillRoundRect(5, convertLocation(startRects, gap, componentHeght, 3), componentHeght, componentHeght, roundRects, ILI9341_YELLOW);
     display->setCursor(12, convertLocation(start, gap, componentHeght, 3));
     display->print("A");
+    lastValues.x = "disconnect";
+    lastValues.y = "disconnect";
+    lastValues.z = "disconnect";
+    lastValues.a = "disconnect";
 
     display->drawLine(230, 0, 230, 240, ILI9341_DARKGREY);
-
-    display->setTextColor(ILI9341_WHITE);
+}
+int startX = 60;
+void refreshXPos(void)
+{
+    log_v("Refresh XPos");
+    int gap = 12;
+    int start = 45;
+    int componentHeght = 47;
+    int startRects = 6;
+    int roundRects = 5;
     display->setTextSize(1);
     display->setFont(&FreeSerifBold18pt7b);
-    display->setCursor(70, convertLocation(start - 4, gap, componentHeght, 0));
-    display->print("5555.5");
-    display->setCursor(70, convertLocation(start - 4, gap, componentHeght, 1));
-    display->print("135456.5");
-    display->setCursor(70, convertLocation(start - 4, gap, componentHeght, 2));
-    display->print("-156.5");
-    display->setCursor(70, convertLocation(start - 4, gap, componentHeght, 3));
-    display->print("0.0");
+    display->fillRoundRect(startX, convertLocation(15, gap, componentHeght, 0), 160, 32, 5, ILI9341_BLUE);
+    display->setCursor(startX, convertLocation(start - 4, gap, componentHeght, 0));
+    display->setTextColor(ILI9341_WHITE);
+    display->print(currentValues.x.c_str());
+}
+
+void refreshYPos(void)
+{
+    log_v("Refresh YPos");
+    int gap = 12;
+    int start = 45;
+    int componentHeght = 47;
+    int startRects = 6;
+    int roundRects = 5;
+    display->setTextSize(1);
+    display->setFont(&FreeSerifBold18pt7b);
+    display->fillRoundRect(startX, convertLocation(15, gap, componentHeght, 1), 160, 32, 5, ILI9341_BLUE);
+    display->setCursor(startX, convertLocation(start - 4, gap, componentHeght, 1));
+    display->setTextColor(ILI9341_WHITE);
+    display->print(currentValues.y.c_str());
+}
+
+void refreshZPos(void)
+{
+    log_v("Refresh ZPos");
+    int gap = 12;
+    int start = 45;
+    int componentHeght = 47;
+    int startRects = 6;
+    int roundRects = 5;
+    display->setTextSize(1);
+    display->setFont(&FreeSerifBold18pt7b);
+    display->fillRoundRect(startX, convertLocation(15, gap, componentHeght, 2), 160, 32, 5, ILI9341_BLUE);
+    display->setCursor(startX, convertLocation(start - 4, gap, componentHeght, 2));
+    display->setTextColor(ILI9341_WHITE);
+    display->print(currentValues.z.c_str());
+}
+
+void refreshAPos(void)
+{
+    log_v("Refresh APos");
+    int gap = 12;
+    int start = 45;
+    int componentHeght = 47;
+    int startRects = 6;
+    int roundRects = 5;
+    display->setTextSize(1);
+    display->setFont(&FreeSerifBold18pt7b);
+    display->fillRoundRect(startX, convertLocation(15, gap, componentHeght, 3), 160, 32, 5, ILI9341_BLUE);
+    display->setCursor(startX, convertLocation(start - 4, gap, componentHeght, 3));
+    display->setTextColor(ILI9341_WHITE);
+    display->print(currentValues.a.c_str());
 }
 
 void refresh(void)
 {
-    if (currentValues.x != lastValues.x)
+
+    log_v("Refresh Display");
+    int x = currentValues.x.compare(lastValues.x);
+    int y = currentValues.y.compare(lastValues.y);
+    int z = currentValues.z.compare(lastValues.z);
+    int a = currentValues.a.compare(lastValues.a);
+    if (x != 0)
     {
-        lastValues.x = currentValues.x;
-        overWritePosition(X, currentValues.x);
+        refreshXPos();
+    }
+    if (y != 0)
+    {
+        refreshYPos();
+    }
+    if (z != 0)
+    {
+        refreshZPos();
+    }
+    if (a != 0)
+    {
+        refreshAPos();
     }
 }
 
@@ -76,14 +152,19 @@ void displayTask(void *p)
 {
     initDisplay(3);
     drawMainTheme();
+    xSemaphore = xSemaphoreCreateMutex();
     while (true)
     {
+        // if (xSemaphoreTake(xSemaphore, (TickType_t)20) == pdTRUE)
+        // {
         refresh();
-        vTaskDelay(1);
+        //     xSemaphoreGive(xSemaphore);
+        // }
+        vTaskDelay(100);
     }
 }
 
 void displaySetup(void)
 {
-    xTaskCreate(displayTask, "displayTask", 10 * 1024, NULL, 1, NULL);
+    xTaskCreate(displayTask, "displayTask", 10 * 1024, NULL, 500, NULL);
 }

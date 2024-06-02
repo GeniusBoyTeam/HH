@@ -7,6 +7,7 @@
 #include <Fonts/FreeSerifBold18pt7b.h>
 #include <iostream>
 #include <list>
+#include "main.h"
 
 #define LCD_MOSI 39
 #define LCD_MISO 40
@@ -40,11 +41,11 @@ enum EState
 
 struct refreshVal
 {
-    double x;
-    double y;
-    double z;
-    double a;
-    double f;
+    std::string x;
+    std::string y;
+    std::string z;
+    std::string a;
+    std::string f;
     int state;
     int memoryMount;
 };
@@ -53,8 +54,6 @@ struct stringProperties
 {
 };
 
-static refreshVal currentValues;
-static refreshVal lastValues;
 static Adafruit_ILI9341 *display = NULL;
 void displaySetup(void);
 void drawMainTheme(void);

@@ -5,6 +5,6 @@ void sendTask(void *p)
     while (true)
     {
         Serial1.write("?");
-        vTaskDelay(2000);
+        vTaskDelay(60);
     }
 }

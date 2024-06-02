@@ -1,51 +1,100 @@
 #include "recieve.h"
 
-std::list<char *> splitString(char *input, char *splitChar)
+using namespace std;
+
+extern refreshVal currentValues;
+extern refreshVal lastValues;
+
+list<string> splitString(string input, string splitChar)
 {
-    std::list<char *> splitedList;
-    char *chars_array = strtok(input, splitChar);
-    while (chars_array != NULL)
+    list<string> splitedList;
+
+    for (char *token = strtok(const_cast<char *>(input.data()), splitChar.c_str()); token != nullptr; token = strtok(nullptr, splitChar.c_str()))
     {
-        splitedList.push_back(chars_array);
-        chars_array = strtok(NULL, splitChar);
+        splitedList.push_back(token);
     }
-    log_v("Splited count: %zu", splitedList.size());
     return splitedList;
 }
 
-bool isContain(char *input, char *findingChar)
+string getString(char *str, int len)
 {
-    std::string s = input;
+    return string(str, len);
+}
+
+bool isContain(string input, char *findingChar)
+{
+    string s = input;
     if (s.rfind(findingChar, 0) == 0)
         return true;
     return false;
 }
 
-const char *cutExtraChar(char *input)
+// Remove first and last char of seting
+string cutExtraChar(string input)
 {
     std::string s = input;
     s.erase(0, 1);
-    s.erase(s.size() - 1);
-    return s.c_str();
+    s.erase(s.size() - 2);
+    return s;
 }
 
-void parseRecieved(char *data)
+void setPositions(string MPos)
+{
+    lastValues = currentValues;
+    list<string> positionsList = splitString(MPos.c_str(), ",");
+    int counter = 0;
+
+    while (positionsList.size() != 0)
+    {
+        switch (counter)
+        {
+        case 0:
+        {
+            currentValues.x = (positionsList.front()).c_str();
+            log_v("X_CURRENT: %s", currentValues.x.c_str());
+            log_v("X_LAST: %s", lastValues.x.c_str());
+            break;
+        }
+        case 1:
+        {
+            currentValues.y = (positionsList.front()).c_str();
+            log_v("Y_CURRENT: %s", currentValues.y.c_str());
+            break;
+        }
+        case 2:
+        {
+            currentValues.z = (positionsList.front()).c_str();
+            log_v("Z_CURRENT: %s", currentValues.z.c_str());
+            break;
+        }
+        case 3:
+        {
+            currentValues.a = (positionsList.front()).c_str();
+            log_v("A_CURRENT: %s", currentValues.a.c_str());
+            break;
+        }
+        default:
+            break;
+        }
+        positionsList.pop_front();
+        counter++;
+    }
+}
+
+void parseRecieved(string data)
 {
     // example inout
     //<Door:0|MPos:0.000,0.000,0.000,0.000|FS:0,0|Pn:P|WCO:0.000,0.000,0.000,0.000>
 
-    // log_i("RECIEVED: %s", data);
-    if (isContain(data, "<")) // response for (?)
+    if (isContain(data.c_str(), "<")) // response for (?)
     {
-        std::list<char *> parsedData = splitString(data, "|");
-        for (char *splited : parsedData)
+        log_v("RECIEVED: %s", data.c_str());
+        list<string> parsedData = splitString(cutExtraChar(data.c_str()).c_str(), "|");
+        for (string splited : parsedData)
         {
             if (isContain(splited, "MPos"))
             {
-                std::string mamad = splited;
-                mamad.erase(0,5);
-                log_i("MPos ->  %s", mamad.c_str());
-
+                setPositions((splited.erase(0, 5)).c_str());
             }
             else if (isContain(splited, "FS"))
             {
@@ -72,7 +121,7 @@ void recieveTask(void *p)
     char endMarker = '\n';
     char rc;
     boolean newData = false;
-
+    xSemaphore = xSemaphoreCreateMutex();
     while (true)
     {
         while (Serial1.available() > 0 && newData == false)
@@ -91,14 +140,19 @@ void recieveTask(void *p)
             else
             {
                 // Do something with recieved data...
-                parseRecieved(receivedChars);
+                // if (xSemaphoreTake(xSemaphore, (TickType_t)20) == pdTRUE)
+                // {
+                parseRecieved(getString(receivedChars, ndx));
+                // xSemaphoreGive(xSemaphore);
                 //..................................
                 receivedChars[ndx] = '\0';
                 ndx = 0;
                 newData = true;
+                // }
             }
+            newData = false;
+            // vTaskDelay(20);
         }
-        newData = false;
-        vTaskDelay(10);
+        vTaskDelay(50);
     }
 }
