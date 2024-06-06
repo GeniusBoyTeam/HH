@@ -38,9 +38,73 @@ string cutExtraChar(string input)
     return s;
 }
 
+void setState(string state)
+{
+    string stateNew = state;
+    if (isContain(stateNew, ":"))
+    {
+        stateNew = splitString(stateNew, ":").front();
+    }
+
+    if (strcmp(stateNew.c_str(), "Idle") == 0)
+    {
+        lastValues.state = currentValues.state;
+        currentValues.state = Idle;
+    }
+    else if (strcmp(stateNew.c_str(), "Run") == 0)
+    {
+        lastValues.state = currentValues.state;
+        currentValues.state = Run;
+    }
+    else if (strcmp(stateNew.c_str(), "Jog") == 0)
+    {
+        lastValues.state = currentValues.state;
+        currentValues.state = Jog;
+    }
+    else if (strcmp(stateNew.c_str(), "Alarm") == 0)
+    {
+        lastValues.state = currentValues.state;
+        currentValues.state = Alarm;
+    }
+    else if (strcmp(stateNew.c_str(), "Door") == 0)
+    {
+        lastValues.state = currentValues.state;
+        currentValues.state = Door;
+    }
+    else if (strcmp(stateNew.c_str(), "Homing") == 0)
+    {
+        lastValues.state = currentValues.state;
+        currentValues.state = Homing;
+    }
+    else if (strcmp(stateNew.c_str(), "Hold") == 0)
+    {
+        lastValues.state = currentValues.state;
+        currentValues.state = Hold;
+    }
+    else if (strcmp(stateNew.c_str(), "Check") == 0)
+    {
+        lastValues.state = currentValues.state;
+        currentValues.state = Check;
+    }
+    else if (strcmp(stateNew.c_str(), "Cycle") == 0)
+    {
+        lastValues.state = currentValues.state;
+        currentValues.state = Cycle;
+    }
+    else if (strcmp(stateNew.c_str(), "Sleep") == 0)
+    {
+        lastValues.state = currentValues.state;
+        currentValues.state = Sleep;
+    }
+}
+
 void setPositions(string MPos)
 {
-    lastValues = currentValues;
+    lastValues.x = currentValues.x;
+    lastValues.y = currentValues.y;
+    lastValues.z = currentValues.z;
+    lastValues.a = currentValues.a;
+
     list<string> positionsList = splitString(MPos.c_str(), ",");
     int counter = 0;
 
@@ -83,16 +147,20 @@ void setPositions(string MPos)
 
 void parseRecieved(string data)
 {
-    // example inout
+    // example input
     //<Door:0|MPos:0.000,0.000,0.000,0.000|FS:0,0|Pn:P|WCO:0.000,0.000,0.000,0.000>
 
     if (isContain(data.c_str(), "<")) // response for (?)
     {
         log_v("RECIEVED: %s", data.c_str());
         list<string> parsedData = splitString(cutExtraChar(data.c_str()).c_str(), "|");
+
+        setState(parsedData.front());
+        parsedData.pop_front();
+
         for (string splited : parsedData)
         {
-            if (isContain(splited, "MPos"))
+            if (isContain(splited, "MPos") || isContain(splited, "WPos"))
             {
                 setPositions((splited.erase(0, 5)).c_str());
             }

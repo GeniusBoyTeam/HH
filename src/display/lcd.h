@@ -5,6 +5,7 @@
 #include <Adafruit_ILI9341.h>
 #include <Fonts/FreeSerifBold24pt7b.h>
 #include <Fonts/FreeSerifBold18pt7b.h>
+#include <Fonts/FreeSerifBold9pt7b.h>
 #include <iostream>
 #include <list>
 #include "main.h"
@@ -28,15 +29,17 @@ enum EChar
 
 enum EState
 {
-    Alarm = 0,
-    Idle,
+    Idle = 0,
+    Run,
     Jog,
+    Alarm,
+    Door,
     Homing,
+    Hold,
     Check,
     Cycle,
-    Hold,
-    Door,
-    Sleep
+    Sleep,
+    Startup // extra state for refresh state on startup
 };
 
 struct refreshVal
@@ -46,7 +49,7 @@ struct refreshVal
     std::string z;
     std::string a;
     std::string f;
-    int state;
+    EState state;
     int memoryMount;
 };
 

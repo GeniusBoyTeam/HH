@@ -2,8 +2,10 @@
 
 refreshVal currentValues;
 refreshVal lastValues;
+char *enumStates[10] = {"Idle", "Run", "Jog", "Alarm", "Door", "Homing", "Hold", "Check", "Cycle", "Sleep"};
 
-Adafruit_ILI9341 *initDisplay(char rotate)
+Adafruit_ILI9341 *
+initDisplay(char rotate)
 {
     SPIClass *vspi = NULL;
     pinMode(LCD_BACKLIGHT, OUTPUT);
@@ -54,6 +56,13 @@ void drawMainTheme(void)
     lastValues.y = "disconnect";
     lastValues.z = "disconnect";
     lastValues.a = "disconnect";
+
+    display->fillRoundRect(240, 125, 75, 60, 5, ILI9341_GREENYELLOW);
+    // feedRate
+
+    display->fillRoundRect(240, 195, 75, 30, 5, ILI9341_WHITE);
+    lastValues.state = Startup;
+    // state
 
     display->drawLine(230, 0, 230, 240, ILI9341_DARKGREY);
 }
@@ -122,6 +131,20 @@ void refreshAPos(void)
     display->print(currentValues.a.c_str());
 }
 
+void refreshState(void)
+{
+    if (currentValues.state != lastValues.state)
+    {
+        log_v("Refresh State: %i",currentValues.state);
+        display->fillRoundRect(240, 195, 75, 30, 5, ILI9341_WHITE);
+        display->setFont(&FreeSerifBold9pt7b);
+        display->setCursor(250, 215);
+        display->setTextSize(1);
+        display->setTextColor(ILI9341_BLACK);
+        display->print(enumStates[currentValues.state]);
+    }
+}
+
 void refresh(void)
 {
     log_v("Refresh Display");
@@ -145,6 +168,7 @@ void refresh(void)
     {
         refreshAPos();
     }
+    refreshState();
 }
 
 void displayTask(void *p)
