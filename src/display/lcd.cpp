@@ -124,7 +124,6 @@ void refreshAPos(void)
 
 void refresh(void)
 {
-
     log_v("Refresh Display");
     int x = currentValues.x.compare(lastValues.x);
     int y = currentValues.y.compare(lastValues.y);
@@ -154,11 +153,7 @@ void displayTask(void *p)
     drawMainTheme();
     while (true)
     {
-        // if (xSemaphoreTake(xSemaphore, (TickType_t)20) == pdTRUE)
-        // {
         refresh();
-        //     xSemaphoreGive(xSemaphore);
-        // }
         vTaskDelay(100);
     }
 }
