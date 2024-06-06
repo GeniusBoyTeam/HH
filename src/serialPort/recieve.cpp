@@ -139,18 +139,13 @@ void recieveTask(void *p)
             else
             {
                 // Do something with recieved data...
-                // if (xSemaphoreTake(xSemaphore, (TickType_t)20) == pdTRUE)
-                // {
                 parseRecieved(getString(receivedChars, ndx));
-                // xSemaphoreGive(xSemaphore);
                 //..................................
                 receivedChars[ndx] = '\0';
                 ndx = 0;
                 newData = true;
-                // }
             }
             newData = false;
-            // vTaskDelay(20);
         }
         vTaskDelay(50);
     }
