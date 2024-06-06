@@ -152,7 +152,6 @@ void displayTask(void *p)
 {
     initDisplay(3);
     drawMainTheme();
-    xSemaphore = xSemaphoreCreateMutex();
     while (true)
     {
         // if (xSemaphoreTake(xSemaphore, (TickType_t)20) == pdTRUE)

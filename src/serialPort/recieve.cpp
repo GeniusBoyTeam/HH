@@ -121,7 +121,6 @@ void recieveTask(void *p)
     char endMarker = '\n';
     char rc;
     boolean newData = false;
-    xSemaphore = xSemaphoreCreateMutex();
     while (true)
     {
         while (Serial1.available() > 0 && newData == false)

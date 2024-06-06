@@ -12,6 +12,7 @@ void setup()
 
   serialSetup();
   displaySetup();
+  keypadSetup();
 }
 
 void loop()

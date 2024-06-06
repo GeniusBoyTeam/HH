@@ -5,8 +5,8 @@
 
 #include "serialPort/serialPort.h"
 #include "display/lcd.h"
+#include "inputs/keypad.h"
 
-static SemaphoreHandle_t xSemaphore = NULL;
 void setSensorTask(TaskFunction_t t);
 void setTbClientTask(TaskFunction_t t);
 
