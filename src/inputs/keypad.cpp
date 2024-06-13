@@ -11,11 +11,11 @@ int satr[6] = {
 };
 
 char *commandMap[5][4] = {
-    {"$J=G91 G21 X3000 F1000", "$J=G91 G21 Y3000 F1000", "$J=G91 G21 Z1000 F1000", "$J=G91 G21 A1000 F1000"},
-    {"$J=G91 G21 X-3000 F1000", "$J=G91 G21 Y-3000 F1000", "$J=G91 G21 Z-1000 F1000", "$J=G91 G21 A-1000 F1000"},
+    {"$J=G91 G21 X200 F1000", "$J=G91 G21 Y3000 F1000", "$J=G91 G21 Z1000 F1000", "$J=G91 G21 A1000 F1000"},
+    {"$J=G91 G21 X-200 F1000", "$J=G91 G21 Y-3000 F1000", "$J=G91 G21 Z-1000 F1000", "$J=G91 G21 A-1000 F1000"},
+    {"0x91", "", "", ""},
+    {"0x92", "", "", "$H"},
     {"$X", "~", "!", "ctrl-x"},
-    {"", "", "", "$H"},
-    {"", "", "", ""},
 };
 
 void keypadTask(void *p)
@@ -43,10 +43,21 @@ void keypadTask(void *p)
                         Serial1.write(0x18);
                         Serial1.write("\n");
                     }
+                    else if (strcmp(commandMap[i][j], "0x91") == 0)
+                    {
+                        Serial1.write(0x91);
+                        Serial1.write("\n");
+                    }
+                    else if (strcmp(commandMap[i][j], "0x92") == 0)
+                    {
+                        Serial1.write(0x92);
+                        Serial1.write("\n");
+                    }
                     else
                     {
                         Serial1.write(commandMap[i][j]);
                         Serial1.write("\n");
+                        vTaskDelay(3);
                     }
 
                     log_v("COMMAND: [ %s ]", commandMap[i][j]);
@@ -56,7 +67,10 @@ void keypadTask(void *p)
                     }
                     if (i <= 2)
                     {
-                        Serial1.write(0x85);
+                        vTaskDelay(1);
+                        Serial1.write(133);
+                        // Serial1.write("\n");
+                        // Serial1.write(0x85);
                     }
                     // doSomeThings onDisPressed
                     log_v("Satr: %i   - Sotoon: %i     (DisPressed)", i, j);

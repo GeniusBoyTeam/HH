@@ -34,7 +34,7 @@ enum EState
     Jog,
     Alarm,
     Door,
-    Homing,
+    Home,
     Hold,
     Check,
     Cycle,
@@ -51,6 +51,8 @@ struct refreshVal
     std::string f;
     EState state;
     int memoryMount;
+    bool isStateSet;
+    int stateColor;
 };
 
 struct stringProperties

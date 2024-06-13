@@ -21,10 +21,10 @@ string getString(char *str, int len)
     return string(str, len);
 }
 
-bool isContain(string input, char *findingChar)
+bool isContain(string input, string findingChar)
 {
-    string s = input;
-    if (s.rfind(findingChar, 0) == 0)
+    string s = input.c_str();
+    if (s.find(findingChar) != string::npos)
         return true;
     return false;
 }
@@ -40,61 +40,65 @@ string cutExtraChar(string input)
 
 void setState(string state)
 {
+    log_v("state: %s", state.c_str());
     string stateNew = state;
-    if (isContain(stateNew, ":"))
-    {
-        stateNew = splitString(stateNew, ":").front();
-    }
+    lastValues.state = currentValues.state;
+    if (isContain(state, ":"))
+        stateNew = splitString(state.c_str(), ":").front();
 
     if (strcmp(stateNew.c_str(), "Idle") == 0)
     {
-        lastValues.state = currentValues.state;
         currentValues.state = Idle;
+        currentValues.stateColor = ILI9341_WHITE;
     }
     else if (strcmp(stateNew.c_str(), "Run") == 0)
     {
-        lastValues.state = currentValues.state;
         currentValues.state = Run;
+        currentValues.stateColor = ILI9341_DARKGREEN;
     }
     else if (strcmp(stateNew.c_str(), "Jog") == 0)
     {
-        lastValues.state = currentValues.state;
         currentValues.state = Jog;
+        currentValues.stateColor = ILI9341_GREEN;
     }
     else if (strcmp(stateNew.c_str(), "Alarm") == 0)
     {
-        lastValues.state = currentValues.state;
         currentValues.state = Alarm;
+        currentValues.stateColor = ILI9341_RED;
     }
     else if (strcmp(stateNew.c_str(), "Door") == 0)
     {
-        lastValues.state = currentValues.state;
         currentValues.state = Door;
+        currentValues.stateColor = ILI9341_ORANGE;
     }
-    else if (strcmp(stateNew.c_str(), "Homing") == 0)
+    else if (strcmp(stateNew.c_str(), "Home") == 0)
     {
-        lastValues.state = currentValues.state;
-        currentValues.state = Homing;
+        currentValues.state = Home;
+        currentValues.stateColor = ILI9341_PURPLE;
     }
     else if (strcmp(stateNew.c_str(), "Hold") == 0)
     {
-        lastValues.state = currentValues.state;
         currentValues.state = Hold;
+        currentValues.stateColor = ILI9341_DARKGREY;
     }
     else if (strcmp(stateNew.c_str(), "Check") == 0)
     {
-        lastValues.state = currentValues.state;
         currentValues.state = Check;
+        currentValues.stateColor = 0xFFFF;
     }
     else if (strcmp(stateNew.c_str(), "Cycle") == 0)
     {
-        lastValues.state = currentValues.state;
         currentValues.state = Cycle;
+        currentValues.stateColor = 0xFFFF;
     }
     else if (strcmp(stateNew.c_str(), "Sleep") == 0)
     {
-        lastValues.state = currentValues.state;
         currentValues.state = Sleep;
+        currentValues.stateColor = 0xFFFF;
+    }
+    if (lastValues.state != currentValues.state)
+    {
+        currentValues.isStateSet = false;
     }
 }
 
@@ -152,7 +156,7 @@ void parseRecieved(string data)
 
     if (isContain(data.c_str(), "<")) // response for (?)
     {
-        log_v("RECIEVED: %s", data.c_str());
+        log_i("RECIEVED: %s", data.c_str());
         list<string> parsedData = splitString(cutExtraChar(data.c_str()).c_str(), "|");
 
         setState(parsedData.front());
@@ -166,7 +170,7 @@ void parseRecieved(string data)
             }
             else if (isContain(splited, "FS"))
             {
-                log_v("FS: %s", splited);
+                log_v("FS: %s", splited.c_str());
             }
             else if (isContain(splited, "Pn"))
             {

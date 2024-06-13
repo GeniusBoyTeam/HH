@@ -2,6 +2,6 @@
 
 void serialSetup()
 {
-  xTaskCreate(recieveTask, "recieveTask", 2 * 1024, NULL, 400, NULL);
-  xTaskCreate(sendTask, "sendTask", 2 * 1024, NULL, 300, NULL);
+  xTaskCreate(recieveTask, "recieveTask", 10 * 2048, NULL, 400, NULL);
+  xTaskCreate(sendTask, "sendTask", 10 * 2048, NULL, 300, NULL);
 }
