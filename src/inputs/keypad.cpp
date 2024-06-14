@@ -13,9 +13,9 @@ int satr[6] = {
 char *commandMap[5][4] = {
     {"$J=G91 G21 X200 F1000", "$J=G91 G21 Y3000 F1000", "$J=G91 G21 Z1000 F1000", "$J=G91 G21 A1000 F1000"},
     {"$J=G91 G21 X-200 F1000", "$J=G91 G21 Y-3000 F1000", "$J=G91 G21 Z-1000 F1000", "$J=G91 G21 A-1000 F1000"},
-    {"0x91", "", "", ""},
-    {"0x92", "", "", "$H"},
+    {"0x91", "0x92", "G10 L20 P0 X0 Y0 Z0 A0", "$H"},
     {"$X", "~", "!", "ctrl-x"},
+    {"ok", "prevRow", "nextRow", "nextPage"},
 };
 
 void keypadTask(void *p)
@@ -52,6 +52,42 @@ void keypadTask(void *p)
                     {
                         Serial1.write(0x92);
                         Serial1.write("\n");
+                    }
+                    else if (strcmp(commandMap[i][j], "nextPage") == 0)
+                    {
+                        nextLcdPage();
+                        while (digitalRead(sotoon[j]) == 0)
+                        {
+                            vTaskDelay(1);
+                        }
+                        continue;
+                    }
+                    else if (strcmp(commandMap[i][j], "nextRow") == 0)
+                    {
+                        nextMenuItem();
+                        while (digitalRead(sotoon[j]) == 0)
+                        {
+                            vTaskDelay(1);
+                        }
+                        continue;
+                    }
+                    else if (strcmp(commandMap[i][j], "prevRow") == 0)
+                    {
+                        prevMenuItem();
+                        while (digitalRead(sotoon[j]) == 0)
+                        {
+                            vTaskDelay(1);
+                        }
+                        continue;
+                    }
+                    else if (strcmp(commandMap[i][j], "ok") == 0)
+                    {
+                        runItem();
+                        while (digitalRead(sotoon[j]) == 0)
+                        {
+                            vTaskDelay(1);
+                        }
+                        continue;
                     }
                     else
                     {

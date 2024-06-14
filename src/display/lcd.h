@@ -5,6 +5,7 @@
 #include <Adafruit_ILI9341.h>
 #include <Fonts/FreeSerifBold24pt7b.h>
 #include <Fonts/FreeSerifBold18pt7b.h>
+#include <Fonts/FreeSerifBold12pt7b.h>
 #include <Fonts/FreeSerifBold9pt7b.h>
 #include <iostream>
 #include <list>
@@ -55,13 +56,34 @@ struct refreshVal
     int stateColor;
 };
 
-struct stringProperties
+struct pageProp
 {
+    int pageCount;
+    int currentPage;
+    int currentItem;
+    bool itemChanged = true;
+    std::string name;
+    bool isInit;
+};
+
+struct sdCard
+{
+    int freeSpace;
+    int usedSpace;
+    std::list<std::string> items;
+    bool refresh = false;
+    bool isMenuCreated = false;
 };
 
 static Adafruit_ILI9341 *display = NULL;
 void displaySetup(void);
 void drawMainTheme(void);
 Adafruit_ILI9341 *initDisplay(char rotate);
+void nextLcdPage(void);
+void prevLcdPage(void);
+void nextMenuItem(void);
+void prevMenuItem(void);
+void runItem(void);
+void goToMainPage(void);
 
 #endif // HH_LCD
