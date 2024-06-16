@@ -104,6 +104,15 @@ void setState(string state)
   }
 }
 
+char * increaseDecimalPlace(const char* str)
+{
+  log_i("INCREASE");
+  double temp = round(String(str).toDouble() * 100.0) / 100.0;
+  char buffer[10];
+  sprintf(buffer, "%.1lf", temp);
+  return buffer;
+}
+
 void setPositions(string MPos)
 {
   lastValues.x = currentValues.x;
@@ -121,25 +130,48 @@ void setPositions(string MPos)
     case 0:
     {
       currentValues.x = (positionsList.front()).c_str();
+      String mamad = String(currentValues.x.c_str());
+      double temp = round(mamad.toDouble() * 100.0) / 100.0;
+      char buffer[10];
+      sprintf(buffer, "%.1lf", temp);
+      currentValues.x = buffer;
+      
       log_v("X_CURRENT: %s", currentValues.x.c_str());
-      log_v("X_LAST: %s", lastValues.x.c_str());
       break;
     }
     case 1:
     {
       currentValues.y = (positionsList.front()).c_str();
+      String mamad = String(currentValues.y.c_str());
+      double temp = round(mamad.toDouble() * 100.0) / 100.0;
+      char buffer[10];
+      sprintf(buffer, "%.1lf", temp);
+      currentValues.y = buffer;
+
       log_v("Y_CURRENT: %s", currentValues.y.c_str());
       break;
     }
     case 2:
     {
       currentValues.z = (positionsList.front()).c_str();
+      String mamad = String(currentValues.z.c_str());
+      double temp = round(mamad.toDouble() * 100.0) / 100.0;
+      char buffer[10];
+      sprintf(buffer, "%.1lf", temp);
+      currentValues.z = buffer;
+
       log_v("Z_CURRENT: %s", currentValues.z.c_str());
       break;
     }
     case 3:
     {
       currentValues.a = (positionsList.front()).c_str();
+      String mamad = String(currentValues.a.c_str());
+      double temp = round(mamad.toDouble() * 100.0) / 100.0;
+      char buffer[10];
+      sprintf(buffer, "%.1lf", temp);
+      currentValues.a = buffer;
+      
       log_v("A_CURRENT: %s", currentValues.a.c_str());
       break;
     }
