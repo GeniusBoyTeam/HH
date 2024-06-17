@@ -81,7 +81,8 @@ void drawMainTheme(void)
   display->setTextColor(ILI9341_WHITE);
   display->setTextSize(1);
   display->setCursor(248, 108);
-  display->print("300");
+  display->print("0");
+  currentValues.isSpindleRateSet = false;
   // spindle
 
   display->fillRoundRect(200, 139, 115, 62, 5, ILI9341_GREENYELLOW);
@@ -91,7 +92,8 @@ void drawMainTheme(void)
   display->setTextColor(ILI9341_WHITE);
   display->setTextSize(1);
   display->setCursor(248, 175);
-  display->print("12345");
+  display->print("0");
+  currentValues.isFeedRateSet = false;
   // feedRate
 
   display->fillRoundRect(200, 205, 115, 25, 5, ILI9341_WHITE);
@@ -435,18 +437,31 @@ void refreshState(void)
   }
 }
 
-void refreshSpeed(void)
+void refreshFeedRate(void)
 {
-  int speed = currentValues.speed.compare(lastValues.speed);
-  if (speed != 0)
+  if (!currentValues.isFeedRateSet)
   {
-    // log_v("Refresh Speed: %s", currentValues.Speed);
-    // display->setFont(&FreeSerifBold9pt7b);
-    // display->setTextSize(1);
-    // display->fillRoundRect(startX, convertLocation(15, gap, componentHeght, 3), 130, 32, 5, ILI9341_BLUE);
-    // display->setCursor(startX, convertLocation(start - 4, gap, componentHeght, 3));
-    // display->setTextColor(ILI9341_WHITE);
-    // display->print(currentValues.a.c_str());
+    currentValues.isFeedRateSet = true;
+    display->fillRoundRect(240, 155, 70, 30, 4, ILI9341_BLACK);
+    display->setFont(&FreeSerifBold9pt7b);
+    display->setTextColor(ILI9341_WHITE);
+    display->setTextSize(1);
+    display->setCursor(248, 175);
+    display->print(currentValues.feedRate.c_str());
+  }
+}
+
+void refreshSpindleRate(void)
+{
+  if (!currentValues.isSpindleRateSet)
+  {
+    currentValues.isSpindleRateSet = true;
+    display->fillRoundRect(240, 88, 70, 30, 4, ILI9341_BLACK);
+    display->setFont(&FreeSerifBold9pt7b);
+    display->setTextColor(ILI9341_WHITE);
+    display->setTextSize(1);
+    display->setCursor(248, 108);
+    display->print(currentValues.spindleRate.c_str());
   }
 }
 
@@ -459,6 +474,8 @@ void refresh(void)
   refreshZPos();
   refreshAPos();
   refreshState();
+  refreshFeedRate();
+  refreshSpindleRate();
 }
 
 void createMenuItems(void)

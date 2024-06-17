@@ -46,13 +46,27 @@ enum EState
 struct refreshVal
 {
     std::string x;
+    bool isXSet;
+
     std::string y;
+    bool isYSet;
+    
     std::string z;
+    bool isZSet;
+    
     std::string a;
-    std::string speed;
+    bool isASet;
+    
+    std::string feedRate;
+    bool isFeedRateSet;
+    
+    std::string spindleRate;
+    bool isSpindleRateSet;
+    
     EState state;
-    int memoryMount;
     bool isStateSet;
+
+    int memoryMount;
     int stateColor;
 };
 

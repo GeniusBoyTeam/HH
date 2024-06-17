@@ -104,7 +104,7 @@ void setState(string state)
   }
 }
 
-char * increaseDecimalPlace(const char* str)
+char *increaseDecimalPlace(const char *str)
 {
   log_i("INCREASE");
   double temp = round(String(str).toDouble() * 100.0) / 100.0;
@@ -135,7 +135,7 @@ void setPositions(string MPos)
       char buffer[10];
       sprintf(buffer, "%.1lf", temp);
       currentValues.x = buffer;
-      
+
       log_v("X_CURRENT: %s", currentValues.x.c_str());
       break;
     }
@@ -171,7 +171,7 @@ void setPositions(string MPos)
       char buffer[10];
       sprintf(buffer, "%.1lf", temp);
       currentValues.a = buffer;
-      
+
       log_v("A_CURRENT: %s", currentValues.a.c_str());
       break;
     }
@@ -183,13 +183,38 @@ void setPositions(string MPos)
   }
 }
 
+void setFeedRates(string feedRates)
+{
+  lastValues.feedRate = currentValues.feedRate;
+  lastValues.spindleRate = currentValues.spindleRate;
+
+  list<string> feedRateList = splitString(feedRates.c_str(), ",");
+  int counter = 0;
+
+  currentValues.feedRate = (feedRateList.front()).c_str();
+  int feedRate = currentValues.feedRate.compare(lastValues.feedRate);
+  if (feedRate != 0)
+  {
+    currentValues.isFeedRateSet = false;
+    log_v("Current_FEEDRATE-->  %s", currentValues.feedRate.c_str());
+  }
+
+  currentValues.spindleRate = (feedRateList.back()).c_str();
+  int spindleRate = currentValues.spindleRate.compare(lastValues.spindleRate);
+  if (spindleRate != 0)
+  {
+    currentValues.isSpindleRateSet = false;
+    log_v("Current_SPINDLERATE-->  %s", currentValues.spindleRate.c_str());
+  }
+}
+
 void parseRecieved(string data)
 {
   // example input
   //<Door:0|MPos:0.000,0.000,0.000,0.000|FS:0,0|Pn:P|WCO:0.000,0.000,0.000,0.000>
+  log_v("RECIEVED: %s", data.c_str());
   if (page.currentPage == 2 && !SD.refresh)
   {
-    log_v("RECIEVED: %s", data.c_str());
     if (isContain(data.c_str(), "FILE"))
     {
       // Example File --->   [FILE:/System Volume Information/WPSettings.dat|SIZE:12]
@@ -225,11 +250,13 @@ void parseRecieved(string data)
       {
         if (isContain(splited, "MPos") || isContain(splited, "WPos"))
         {
+          // Positions
           setPositions((splited.erase(0, 5)).c_str());
         }
         else if (isContain(splited, "FS"))
         {
-          log_v("FS: %s", splited.c_str());
+          // feedRate and spindleRate
+          setFeedRates((splited.erase(0, 3)).c_str());
         }
         else if (isContain(splited, "Pn"))
         {
