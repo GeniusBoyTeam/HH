@@ -12,7 +12,7 @@ void sendTask(void *p)
             Serial1.write("?");
             vTaskDelay(60);
         }
-        else if (page.currentPage == 2 && !SD.refresh)
+        else if (page.currentPage == 2 && !SD.refresh && page.isInit)
         {
             Serial1.write("$SD/List");
             Serial1.write("\n");

@@ -250,9 +250,6 @@ void parseRecieved(string data)
     }
     else if (isContain(data.c_str(), "SD"))
     {
-    }
-    else if (isContain(data.c_str(), "ok"))
-    {
       SD.refresh = true;
     }
   }

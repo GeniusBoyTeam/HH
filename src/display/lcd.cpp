@@ -64,7 +64,7 @@ void drawMainTheme(void)
   currentValues.isSpindleRateSet = false;
   currentValues.isFeedRateSet = false;
   currentValues.isStateSet = false;
-
+  SD.refresh = false;
 
   display->fillRoundRect(200, 5, 115, 62, 5, ILI9341_GREENYELLOW);
   display->fillRoundRect(205, 21, 30, 30, 4, ILI9341_BLACK);
@@ -271,6 +271,7 @@ void drawSDTheme(void)
   display->setFont(&FreeSerifBold18pt7b);
   display->print("GRBL Storage");
 
+  display->fillRect(17, 60, 20, 130, ILI9341_WHITE);
   display->drawRGBBitmap(92, 70, image_data_Image, 136, 153);
 }
 
@@ -351,7 +352,7 @@ void refreshXPos(void)
   {
     log_v("Refresh XPos");
     currentValues.isXSet = true;
-    
+
     int gap = 12;
     int start = 45;
     int componentHeght = 47;
@@ -393,7 +394,7 @@ void refreshZPos(void)
   {
     log_v("Refresh ZPos");
     currentValues.isZSet = true;
-    
+
     int gap = 12;
     int start = 45;
     int componentHeght = 47;
@@ -490,6 +491,7 @@ void createMenuItems(void)
   int start = 75;
   int gap = 20;
   int counter = 0;
+  log_i("Create menu items --> %zu", SD.items.size());
   for (std::string item : SD.items)
   {
     display->setTextColor(ILI9341_BLACK);
@@ -507,7 +509,7 @@ void refreshMenuCurser()
   int gap = 20;
   int counter = 0;
   display->fillRect(17, 60, 20, 130, ILI9341_WHITE);
-  display->fillRoundRect(17, start + (gap * page.currentItem), 18, 5, 2, ILI9341_CYAN);
+  display->fillRoundRect(17, start + (gap * page.currentItem), 18, 5, 2, ILI9341_GREENYELLOW);
 }
 
 void displayTask(void *p)
