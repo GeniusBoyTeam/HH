@@ -194,6 +194,23 @@ void setPositions(string MPos)
   }
 }
 
+void setFeedRateOV(string OV)
+{
+  log_v("OV--> %s",OV.c_str());
+  lastValues.feedRateOV = currentValues.feedRateOV;
+
+  list<string> ovList = splitString(OV.c_str(), ",");
+  int counter = 0;
+
+  currentValues.feedRateOV = (ovList.front()).c_str();
+  int ovChanged = currentValues.feedRateOV.compare(lastValues.feedRateOV);
+  if (ovChanged != 0)
+  {
+    currentValues.isFeedRateOVSET = false;
+    log_v("Current_FeedRateOV-->  %s", currentValues.feedRateOV.c_str());
+  }
+}
+
 void setFeedRates(string feedRates)
 {
   lastValues.feedRate = currentValues.feedRate;
@@ -292,10 +309,14 @@ void parseRecieved(string data)
         }
         else if (isContain(splited, "SD"))
         {
-          log_v("SD-->  %s", splited.c_str());
+          //progress percent of file running
           setRunProgress((splited.erase(0, 3)).c_str());
         }
-        log_v("Splited recieve: %s", splited);
+        else if (isContain(splited, "Ov"))
+        {
+          //overwrite percent of feedrate and spindlerate
+          setFeedRateOV((splited.erase(0, 3)).c_str());
+        }
       }
     }
   }

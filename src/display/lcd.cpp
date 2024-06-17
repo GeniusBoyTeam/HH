@@ -64,6 +64,8 @@ void drawMainTheme(void)
   currentValues.isSpindleRateSet = false;
   currentValues.isFeedRateSet = false;
   currentValues.isStateSet = false;
+  currentValues.isFeedRateOVSET = false;
+  currentValues.isProgressSet = false;
   SD.refresh = false;
 
   display->fillRoundRect(200, 5, 115, 62, 5, ILI9341_GREENYELLOW);
@@ -492,6 +494,22 @@ void refreshProgress(void)
   }
 }
 
+void refreshOV(void)
+{
+  if (!currentValues.isFeedRateOVSET)
+  {
+    currentValues.isFeedRateOVSET = true;
+    display->setFont(&FreeSerifBold9pt7b);
+    display->setTextColor(ILI9341_WHITE);
+    display->setTextSize(1);
+    display->setCursor(248, 55);
+    display->fillRoundRect(240, 38, 70, 25, 4, ILI9341_BLACK);
+    char buffer[10];
+    sprintf(buffer, "o:%s%%", currentValues.feedRateOV.c_str());
+    display->print(buffer);
+  }
+}
+
 void refresh(void)
 {
   log_v("Refresh Main Display");
@@ -503,6 +521,7 @@ void refresh(void)
   refreshState();
   refreshFeedRate();
   refreshSpindleRate();
+  refreshOV();
   if (currentValues.state == Run)
   {
     refreshProgress();

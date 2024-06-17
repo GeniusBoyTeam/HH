@@ -65,6 +65,9 @@ struct refreshVal
 
     std::string progress;
     bool isProgressSet;
+
+    std::string feedRateOV;
+    bool isFeedRateOVSET;
     
     EState state;
     bool isStateSet;
