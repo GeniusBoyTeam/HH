@@ -104,15 +104,6 @@ void setState(string state)
   }
 }
 
-char *increaseDecimalPlace(const char *str)
-{
-  log_i("INCREASE");
-  double temp = round(String(str).toDouble() * 100.0) / 100.0;
-  char buffer[10];
-  sprintf(buffer, "%.1lf", temp);
-  return buffer;
-}
-
 void setPositions(string MPos)
 {
   lastValues.x = currentValues.x;
@@ -282,6 +273,10 @@ void parseRecieved(string data)
         else if (isContain(splited, "WCO"))
         {
           log_v("WCO: %s", splited);
+        }
+        else if (isContain(splited, "SD"))
+        {
+          log_i("WCO: %s", splited);
         }
         log_v("Splited recieve: %s", splited);
       }
