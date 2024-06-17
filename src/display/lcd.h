@@ -49,7 +49,7 @@ struct refreshVal
     std::string y;
     std::string z;
     std::string a;
-    std::string f;
+    std::string speed;
     EState state;
     int memoryMount;
     bool isStateSet;
