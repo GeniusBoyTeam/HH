@@ -62,6 +62,9 @@ struct refreshVal
     
     std::string spindleRate;
     bool isSpindleRateSet;
+
+    std::string progress;
+    bool isProgressSet;
     
     EState state;
     bool isStateSet;

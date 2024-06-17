@@ -219,6 +219,22 @@ void setFeedRates(string feedRates)
   }
 }
 
+void setRunProgress(string progressVal)
+{
+  lastValues.progress = currentValues.progress;
+
+  list<string> progressList = splitString(progressVal.c_str(), ",");
+  int counter = 0;
+
+  currentValues.progress = (progressList.front()).c_str();
+  int progress = currentValues.progress.compare(lastValues.progress);
+  if (progress != 0)
+  {
+    currentValues.isProgressSet = false;
+    log_v("Current_PROGRESS-->  %s", currentValues.progress.c_str());
+  }
+}
+
 void parseRecieved(string data)
 {
   // example input
@@ -233,7 +249,7 @@ void parseRecieved(string data)
       std::list<string> allFiles = splitString(firstLayer.c_str(), "/");
       if (allFiles.size() == 2) // import just root file
       {
-        if (isContain(allFiles.back().c_str(), "TAP")) // import just .TAP files
+        if (isContain(allFiles.back().c_str(), "TAP") || isContain(allFiles.back().c_str(), "tap") || isContain(allFiles.back().c_str(), "Tap")) // import just .TAP files
         {
           SD.items.push_back(allFiles.back().c_str());
         }
@@ -276,7 +292,8 @@ void parseRecieved(string data)
         }
         else if (isContain(splited, "SD"))
         {
-          log_i("WCO: %s", splited);
+          log_v("SD-->  %s", splited.c_str());
+          setRunProgress((splited.erase(0, 3)).c_str());
         }
         log_v("Splited recieve: %s", splited);
       }
