@@ -491,7 +491,6 @@ void createMenuItems(void)
   int start = 75;
   int gap = 20;
   int counter = 0;
-  log_i("Create menu items --> %zu", SD.items.size());
   for (std::string item : SD.items)
   {
     display->setTextColor(ILI9341_BLACK);
