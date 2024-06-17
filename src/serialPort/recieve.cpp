@@ -136,7 +136,12 @@ void setPositions(string MPos)
       sprintf(buffer, "%.1lf", temp);
       currentValues.x = buffer;
 
-      log_v("X_CURRENT: %s", currentValues.x.c_str());
+      int xChange = currentValues.x.compare(lastValues.x);
+      if (xChange != 0)
+      {
+        currentValues.isXSet = false;
+        log_v("X_CURRENT-->  %s", currentValues.x.c_str());
+      }
       break;
     }
     case 1:
@@ -148,7 +153,12 @@ void setPositions(string MPos)
       sprintf(buffer, "%.1lf", temp);
       currentValues.y = buffer;
 
-      log_v("Y_CURRENT: %s", currentValues.y.c_str());
+      int yChange = currentValues.y.compare(lastValues.y);
+      if (yChange != 0)
+      {
+        currentValues.isYSet = false;
+        log_v("Y_CURRENT-->  %s", currentValues.y.c_str());
+      }
       break;
     }
     case 2:
@@ -160,7 +170,12 @@ void setPositions(string MPos)
       sprintf(buffer, "%.1lf", temp);
       currentValues.z = buffer;
 
-      log_v("Z_CURRENT: %s", currentValues.z.c_str());
+      int zChange = currentValues.z.compare(lastValues.z);
+      if (zChange != 0)
+      {
+        currentValues.isZSet = false;
+        log_v("Z_CURRENT-->  %s", currentValues.z.c_str());
+      }
       break;
     }
     case 3:
@@ -172,7 +187,12 @@ void setPositions(string MPos)
       sprintf(buffer, "%.1lf", temp);
       currentValues.a = buffer;
 
-      log_v("A_CURRENT: %s", currentValues.a.c_str());
+      int aChange = currentValues.a.compare(lastValues.a);
+      if (aChange != 0)
+      {
+        currentValues.isASet = false;
+        log_v("A_CURRENT-->  %s", currentValues.a.c_str());
+      }
       break;
     }
     default:

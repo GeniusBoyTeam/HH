@@ -56,10 +56,15 @@ void drawMainTheme(void)
   display->fillRoundRect(5, convertLocation(startRects, gap, componentHeght, 3), componentHeght, componentHeght, roundRects, ILI9341_GREENYELLOW);
   display->setCursor(12, convertLocation(start, gap, componentHeght, 3));
   display->print("A");
-  lastValues.x = "disconnect";
-  lastValues.y = "disconnect";
-  lastValues.z = "disconnect";
-  lastValues.a = "disconnect";
+
+  currentValues.isXSet = false;
+  currentValues.isYSet = false;
+  currentValues.isZSet = false;
+  currentValues.isASet = false;
+  currentValues.isSpindleRateSet = false;
+  currentValues.isFeedRateSet = false;
+  currentValues.isStateSet = false;
+
 
   display->fillRoundRect(200, 5, 115, 62, 5, ILI9341_GREENYELLOW);
   display->fillRoundRect(205, 21, 30, 30, 4, ILI9341_BLACK);
@@ -82,7 +87,6 @@ void drawMainTheme(void)
   display->setTextSize(1);
   display->setCursor(248, 108);
   display->print("0");
-  currentValues.isSpindleRateSet = false;
   // spindle
 
   display->fillRoundRect(200, 139, 115, 62, 5, ILI9341_GREENYELLOW);
@@ -93,7 +97,6 @@ void drawMainTheme(void)
   display->setTextSize(1);
   display->setCursor(248, 175);
   display->print("0");
-  currentValues.isFeedRateSet = false;
   // feedRate
 
   display->fillRoundRect(200, 205, 115, 25, 5, ILI9341_WHITE);
@@ -344,10 +347,11 @@ void runItem()
 int startX = 60;
 void refreshXPos(void)
 {
-  int x = currentValues.x.compare(lastValues.x);
-  if (x != 0)
+  if (!currentValues.isXSet)
   {
     log_v("Refresh XPos");
+    currentValues.isXSet = true;
+    
     int gap = 12;
     int start = 45;
     int componentHeght = 47;
@@ -364,10 +368,11 @@ void refreshXPos(void)
 
 void refreshYPos(void)
 {
-  int y = currentValues.y.compare(lastValues.y);
-  if (y != 0)
+  if (!currentValues.isYSet)
   {
     log_v("Refresh YPos");
+    currentValues.isYSet = true;
+
     int gap = 12;
     int start = 45;
     int componentHeght = 47;
@@ -384,10 +389,11 @@ void refreshYPos(void)
 
 void refreshZPos(void)
 {
-  int z = currentValues.z.compare(lastValues.z);
-  if (z != 0)
+  if (!currentValues.isZSet)
   {
     log_v("Refresh ZPos");
+    currentValues.isZSet = true;
+    
     int gap = 12;
     int start = 45;
     int componentHeght = 47;
@@ -404,10 +410,11 @@ void refreshZPos(void)
 
 void refreshAPos(void)
 {
-  int a = currentValues.a.compare(lastValues.a);
-  if (a != 0)
+  if (!currentValues.isASet)
   {
     log_v("Refresh APos");
+    currentValues.isASet = true;
+
     int gap = 12;
     int start = 45;
     int componentHeght = 47;
