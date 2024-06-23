@@ -10,12 +10,13 @@ int satr[6] = {
     13,
 };
 
-char *commandMap[5][4] = {
-    {"$J=G91 G21 X200 F1000", "$J=G91 G21 Y3000 F1000", "$J=G91 G21 Z1000 F1000", "$J=G91 G21 A1000 F1000"},
-    {"$J=G91 G21 X-200 F1000", "$J=G91 G21 Y-3000 F1000", "$J=G91 G21 Z-1000 F1000", "$J=G91 G21 A-1000 F1000"},
-    {"0x91", "0x92", "G10 L20 P0 X0 Y0 Z0 A0", "$H"},
-    {"$X", "~", "!", "ctrl-x"},
-    {"ok", "prevRow", "nextRow", "nextPage"},
+char *commandMap[6][4] = {
+    {"$J=G91 G21 Y3000 F1000", "$J=G91 G21 A1000 F1000", "$J=G91 G21 Z1000 F1000", "$J=G91 G21 X200 F1000"},      //0
+    {"$J=G91 G21 Z-1000 F1000", "$J=G91 G21 Y-3000 F1000", "ok", "$J=G91 G21 X-200 F1000"},      //1
+    {"$J=G91 G21 A-1000 F1000", "0x91", "0x92", "$X"},      //2
+    {"ctrl-x", "~", "$H", "nextPage"},      //3
+    {"G10 L20 P0 X0 Y0 Z0 A0", "sp+", "sp-", "!"},      //4
+    {"spEnable", "mist", "fn", "macro"}       //5
 };
 
 void keypadTask(void *p)
@@ -38,6 +39,7 @@ void keypadTask(void *p)
                 {
                     // doSomeThings onPressed
                     log_v("Satr: %i   - Sotoon: %i     (Pressed)", i, j);
+                    log_v("command: %s", commandMap[i][j]);
                     if (strcmp(commandMap[i][j], "ctrl-x") == 0)
                     {
                         Serial1.write(0x18);
