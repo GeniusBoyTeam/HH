@@ -26,11 +26,11 @@ char *commandMap[6][4] = {
     {"$J=G91 G21 Y3000 F1000", "$J=G91 G21 A1000 F1000",
      "$J=G91 G21 Z1000 F1000", "$J=G91 G21 X200 F1000"},  // 0
     {"$J=G91 G21 Z-1000 F1000", "$J=G91 G21 Y-3000 F1000", "ok",
-     "$J=G91 G21 X-200 F1000"},                         // 1
+     "$J=G91 G21 X-200 F1000"},                             // 1
     {"$J=G91 G21 A-1000 F1000", "0x92", "0x91", "ctrl-x"},  // 2
-    {"$X", "~", "$H", "nextPage"},                  // 3
-    {"G10 L20 P0 X0 Y0 Z0 A0", "sp+", "sp-", "!"},      // 4
-    {"spEnable", "mist", "fn", "macro"}                 // 5
+    {"$X", "~", "$H", "nextPage"},                          // 3
+    {"G10 L20 P0 X0 Y0 Z0 A0", "sp+", "sp-", "!"},          // 4
+    {"spEnable", "mist", "fn", "macro"}                     // 5
 };
 #endif
 
@@ -98,17 +98,23 @@ void keypadTask(void *p) {
             }
             continue;
           } else if (strcmp(commandMap[i][j], "sp+") == 0) {
-            Serial1.write(0x9A);
-            Serial1.write("\n");
-            beepBuzzer();
+            int isEnable = currentValues.spindleRate.compare("0");
+            if (isEnable) {
+              Serial1.write(0x9A);
+              Serial1.write("\n");
+              beepBuzzer();
+            }
             while (digitalRead(sotoon[j]) == 0) {
               vTaskDelay(1);
             }
             continue;
           } else if (strcmp(commandMap[i][j], "sp-") == 0) {
-            Serial1.write(0x9B);
-            Serial1.write("\n");
-            beepBuzzer();
+            int isEnable = currentValues.spindleRate.compare("0");
+            if (isEnable) {
+              Serial1.write(0x9B);
+              Serial1.write("\n");
+              beepBuzzer();
+            }
             while (digitalRead(sotoon[j]) == 0) {
               vTaskDelay(1);
             }
