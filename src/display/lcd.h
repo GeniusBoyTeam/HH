@@ -72,6 +72,7 @@ struct refreshVal
     EState state;
     bool isStateSet;
 
+    bool alarm;
     int memoryMount;
     int stateColor;
 };

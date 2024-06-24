@@ -6,6 +6,7 @@
 #include "serialPort/serialPort.h"
 #include "display/lcd.h"
 #include "inputs/keypad.h"
+#include "outputs/buzzer.h"
 
 void setSensorTask(TaskFunction_t t);
 void setTbClientTask(TaskFunction_t t);

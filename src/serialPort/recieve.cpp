@@ -43,24 +43,31 @@ void setState(string state) {
   if (strcmp(stateNew.c_str(), "Idle") == 0) {
     currentValues.state = Idle;
     currentValues.stateColor = ILI9341_WHITE;
+    currentValues.alarm = false;
   } else if (strcmp(stateNew.c_str(), "Run") == 0) {
     currentValues.state = Run;
     currentValues.stateColor = ILI9341_YELLOW;
+    currentValues.alarm = false;
   } else if (strcmp(stateNew.c_str(), "Jog") == 0) {
     currentValues.state = Jog;
     currentValues.stateColor = ILI9341_GREEN;
+    currentValues.alarm = false;
   } else if (strcmp(stateNew.c_str(), "Alarm") == 0) {
     currentValues.state = Alarm;
     currentValues.stateColor = ILI9341_RED;
+    currentValues.alarm = true;
   } else if (strcmp(stateNew.c_str(), "Door") == 0) {
     currentValues.state = Door;
     currentValues.stateColor = ILI9341_ORANGE;
+    currentValues.alarm = true;
   } else if (strcmp(stateNew.c_str(), "Home") == 0) {
     currentValues.state = Home;
     currentValues.stateColor = ILI9341_PURPLE;
+    currentValues.alarm = true;
   } else if (strcmp(stateNew.c_str(), "Hold") == 0) {
     currentValues.state = Hold;
     currentValues.stateColor = ILI9341_DARKGREY;
+    currentValues.alarm = true;
   } else if (strcmp(stateNew.c_str(), "Check") == 0) {
     currentValues.state = Check;
     currentValues.stateColor = 0xFFFF;
