@@ -75,13 +75,10 @@ void keypadTask(void *p) {
               log_v("Satr: %i   - Sotoon: %i     (Pressed)", i, j);
               log_v("command: %s", commandMap[i][j]);
 
-              log_i("clicked");
               if (isContain(commandMap[i][j], "$J")) {
                 char buffer[30];
                 sprintf(buffer, "%s F%i", commandMap[i][j],
                         currentValues.jogSpeed);
-
-                log_i("COMMAND: [ %s ]", buffer);
                 Serial1.write(buffer);
                 Serial1.write("\n");
                 while (digitalRead(sotoon[j]) == 0) {
@@ -89,7 +86,6 @@ void keypadTask(void *p) {
                 }
 
                 vTaskDelay(10);
-                log_i("on pressed");
                 Serial1.write(0x85);
                 Serial1.write("\n");
               } else {
