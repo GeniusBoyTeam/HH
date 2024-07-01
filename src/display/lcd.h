@@ -1,14 +1,16 @@
 #if !defined(HH_LCD)
 #define HH_LCD
 
-#include <Arduino.h>
 #include <Adafruit_ILI9341.h>
-#include <Fonts/FreeSerifBold24pt7b.h>
-#include <Fonts/FreeSerifBold18pt7b.h>
+#include <Arduino.h>
 #include <Fonts/FreeSerifBold12pt7b.h>
+#include <Fonts/FreeSerifBold18pt7b.h>
+#include <Fonts/FreeSerifBold24pt7b.h>
 #include <Fonts/FreeSerifBold9pt7b.h>
+
 #include <iostream>
 #include <list>
+
 #include "main.h"
 
 #define LCD_MOSI 39
@@ -19,81 +21,73 @@
 #define LCD_RST 35
 #define LCD_BACKLIGHT 41
 
-enum EChar
-{
-    X = 0,
-    Y = 1,
-    Z = 2,
-    A = 3,
-    F = 4
+enum EChar { X = 0, Y = 1, Z = 2, A = 3, F = 4 };
+
+enum EState {
+  Idle = 0,
+  Run,
+  Jog,
+  Alarm,
+  Door,
+  Home,
+  Hold,
+  Check,
+  Cycle,
+  Sleep,
+  Startup  // extra state for refresh state on startup
 };
 
-enum EState
-{
-    Idle = 0,
-    Run,
-    Jog,
-    Alarm,
-    Door,
-    Home,
-    Hold,
-    Check,
-    Cycle,
-    Sleep,
-    Startup // extra state for refresh state on startup
+struct refreshVal {
+  std::string x;
+  bool isXSet;
+
+  std::string y;
+  bool isYSet;
+
+  std::string z;
+  bool isZSet;
+
+  std::string a;
+  bool isASet;
+
+  std::string feedRate;
+  bool isFeedRateSet;
+
+  std::string spindleRate;
+  bool isSpindleRateSet;
+
+  std::string progress;
+  bool isProgressSet;
+
+  std::string feedRateOV;
+  bool isFeedRateOVSET;
+
+  EState state;
+  bool isStateSet;
+
+  int jogSpeed = 1000;
+
+  bool alarm;
+
+  int memoryMount;
+  int stateColor;
 };
 
-struct refreshVal
-{
-    std::string x;
-    bool isXSet;
-
-    std::string y;
-    bool isYSet;
-    
-    std::string z;
-    bool isZSet;
-    
-    std::string a;
-    bool isASet;
-    
-    std::string feedRate;
-    bool isFeedRateSet;
-    
-    std::string spindleRate;
-    bool isSpindleRateSet;
-
-    std::string progress;
-    bool isProgressSet;
-
-    std::string feedRateOV;
-    bool isFeedRateOVSET;
-    
-    EState state;
-    bool isStateSet;
-
-    bool alarm;
-    int memoryMount;
-    int stateColor;
+struct pageProp {
+  int pageCount;
+  int currentPage;
+  int currentItem;
+  bool itemChanged = true;
+  std::string name;
+  bool isInit;
 };
 
-struct pageProp
-{
-    int pageCount;
-    int currentPage;
-    int currentItem;
-    bool itemChanged = true;
-    std::string name;
-    bool isInit;
-};
-
-struct sdCard
-{
-    int freeSpace;
-    int usedSpace;
-    std::list<std::string> items;
-    bool refresh = false;
-    bool isMenuCreated = false;
+struct sdCard {
+  int freeSpace;
+  int usedSpace;
+  std::list<std::string> items;
+  bool refresh = false;
+  bool isMenuCreated = false;
 };
 
 static Adafruit_ILI9341 *display = NULL;
@@ -107,4 +101,4 @@ void prevMenuItem(void);
 void runItem(void);
 void goToMainPage(void);
 
-#endif // HH_LCD
+#endif  // HH_LCD

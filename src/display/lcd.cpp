@@ -289,6 +289,7 @@ void nextLcdPage()
   page.currentPage = resultPage;
   log_v("CurrentPage= %i", page.currentPage);
   page.isInit = false;
+  page.currentItem=0;
   page.itemChanged = true;
 }
 
@@ -298,6 +299,7 @@ void goToMainPage()
   SD.isMenuCreated = false;
   page.currentPage = 1;
   page.isInit = false;
+  page.currentItem=0;
   page.itemChanged = true;
 }
 
@@ -325,6 +327,7 @@ void prevMenuItem()
 
 void prevLcdPage()
 {
+  page.currentItem=0;
   page.itemChanged = true;
   int resultPage = page.currentPage - 1;
   if (resultPage == 0)
