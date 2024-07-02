@@ -69,6 +69,8 @@ struct refreshVal {
 
   bool alarm;
 
+  std::string macro;
+
   int memoryMount;
   int stateColor;
 };
@@ -95,10 +97,12 @@ void displaySetup(void);
 void drawMainTheme(void);
 Adafruit_ILI9341 *initDisplay(char rotate);
 void nextLcdPage(void);
+void setMacroItem(void);
 void prevLcdPage(void);
 void nextMenuItem(void);
 void prevMenuItem(void);
 void runItem(void);
+void runMacroItem(void);
 void goToMainPage(void);
 
 #endif  // HH_LCD

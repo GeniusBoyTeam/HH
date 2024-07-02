@@ -40,7 +40,7 @@ char *commandMapSDCard[6][4] = {
     {"", "", "", ""},            // 2
     {"", "", "", "nextPage"},    // 3
     {"", "", "", ""},            // 4
-    {"", "", "", ""}             // 5
+    {"", "", "", "macro"}        // 5
 };
 #endif
 
@@ -73,7 +73,7 @@ void keypadTask(void *p) {
             if (page.currentPage == 1) {
               // doSomeThings onPressed
               log_v("Satr: %i   - Sotoon: %i     (Pressed)", i, j);
-              log_v("command: %s", commandMap[i][j]);
+              log_i("command: %s", commandMap[i][j]);
 
               if (isContain(commandMap[i][j], "$J")) {
                 char buffer[30];
@@ -156,6 +156,29 @@ void keypadTask(void *p) {
                     vTaskDelay(1);
                   }
                   continue;
+                } else if (strcmp(commandMap[i][j], "macro") == 0) {
+                  runMacroItem();
+                  beepBuzzer();
+                  while (digitalRead(sotoon[j]) == 0) {
+                    vTaskDelay(1);
+                  }
+                  continue;
+                } else if (strcmp(commandMap[i][j], "mist") == 0) {
+                  Serial1.write("M7");
+                  Serial1.write("\n");
+                  beepBuzzer();
+                  while (digitalRead(sotoon[j]) == 0) {
+                    vTaskDelay(1);
+                  }
+                  continue;
+                } else if (strcmp(commandMap[i][j], "fn") == 0) {
+                  Serial1.write("M9");
+                  Serial1.write("\n");
+                  beepBuzzer();
+                  while (digitalRead(sotoon[j]) == 0) {
+                    vTaskDelay(1);
+                  }
+                  continue;
                 } else if (strcmp(commandMap[i][j], "sp+") == 0) {
                   int isEnable = currentValues.spindleRate.compare("0");
                   if (isEnable) {
@@ -197,7 +220,6 @@ void keypadTask(void *p) {
                   Serial1.write("\n");
                   vTaskDelay(3);
                 }
-                log_v("COMMAND: [ %s ]", commandMap[i][j]);
                 while (digitalRead(sotoon[j]) == 0) {
                   vTaskDelay(1);
                 }
@@ -230,6 +252,13 @@ void keypadTask(void *p) {
                 continue;
               } else if (strcmp(commandMapSDCard[i][j], "Up") == 0) {
                 prevMenuItem();
+                beepBuzzer();
+                while (digitalRead(sotoon[j]) == 0) {
+                  vTaskDelay(1);
+                }
+                continue;
+              } else if (strcmp(commandMapSDCard[i][j], "macro") == 0) {
+                setMacroItem();
                 beepBuzzer();
                 while (digitalRead(sotoon[j]) == 0) {
                   vTaskDelay(1);
