@@ -60,7 +60,7 @@ void keypadTask(void *p) {
         clicked = false;
         if (digitalRead(sotoon[j]) == 0) {
           clicked = true;
-          timeD = millis() + 100;
+          timeD = millis() + 50;
           while (millis() <= timeD) {
             if (digitalRead(sotoon[j]) != 0) {
               vTaskDelay(2);
@@ -86,6 +86,12 @@ void keypadTask(void *p) {
                 }
 
                 vTaskDelay(10);
+                Serial1.write(0x85);
+                Serial1.write("\n");
+                vTaskDelay(2);
+                Serial1.write("$J=G91 G21 X0.001 F1");
+                Serial1.write("\n");
+                vTaskDelay(2);
                 Serial1.write(0x85);
                 Serial1.write("\n");
               } else {
