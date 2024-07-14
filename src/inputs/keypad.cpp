@@ -207,6 +207,8 @@ void keypadTask(void *p) {
                     Serial1.write("M3 S150");
                     Serial1.write("\n");
                   } else {
+                    Serial1.write(0x99);
+                    Serial1.write("\n");
                     Serial1.write("M5");
                     Serial1.write("\n");
                   }
