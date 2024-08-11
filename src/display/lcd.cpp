@@ -3,17 +3,18 @@
 refreshVal currentValues;
 refreshVal lastValues;
 pageProp page;
-sdCard SD;
+sdCard SDCard;
 
-char *enumStates[10] = {"Idle", "Run",  "Jog",   "Alarm", "Door",
+char *enumStates[10] = {"Idle", "Run", "Jog", "Alarm", "Door",
                         "Home", "Hold", "Check", "Cycle", "Sleep"};
 
-Adafruit_ILI9341 *initDisplay(char rotate) {
+Adafruit_ILI9341 *initDisplay(char rotate)
+{
   SPIClass *vspi = NULL;
   pinMode(LCD_BACKLIGHT, OUTPUT);
   digitalWrite(LCD_BACKLIGHT, HIGH);
   vspi = new SPIClass(FSPI);
-  vspi->begin(LCD_CLK, -1, LCD_MOSI, -1);  // SCLK, MISO, MOSI, SS
+  vspi->begin(LCD_CLK, -1, LCD_MOSI, -1); // SCLK, MISO, MOSI, SS
   Adafruit_ILI9341 *a = new Adafruit_ILI9341(vspi, LCD_DC, LCD_CS, LCD_RST);
   a->begin();
   a->fillScreen(ILI9341_BLACK);
@@ -24,11 +25,13 @@ Adafruit_ILI9341 *initDisplay(char rotate) {
 
 void overWritePosition(EChar character, double value) {}
 
-int16_t convertLocation(int start, int gap, int componentHeight, int number) {
+int16_t convertLocation(int start, int gap, int componentHeight, int number)
+{
   return start + (gap * number) + (componentHeight * number);
 }
 
-void drawMainTheme(void) {
+void drawMainTheme(void)
+{
   display->fillScreen(ILI9341_BLACK);
   int gap = 12;
   int start = 45;
@@ -69,7 +72,7 @@ void drawMainTheme(void) {
   currentValues.isStateSet = false;
   currentValues.isFeedRateOVSET = false;
   currentValues.isProgressSet = false;
-  SD.refresh = false;
+  SDCard.refresh = false;
 
   display->fillRoundRect(200, 5, 115, 62, 5, ILI9341_GREENYELLOW);
   display->fillRoundRect(205, 21, 30, 30, 4, ILI9341_BLACK);
@@ -2425,7 +2428,8 @@ static const uint16_t image_data_Image[20808] = {
     0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff,
     0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff};
 
-void refreshMacroVal(void) {
+void refreshMacroVal(void)
+{
   display->fillRoundRect(105, 30, 180, 20, 10, ILI9341_GREENYELLOW);
   display->setTextColor(ILI9341_BLACK);
   display->setTextSize(1);
@@ -2434,7 +2438,8 @@ void refreshMacroVal(void) {
   display->print(currentValues.macro.c_str());
 }
 
-void drawSDTheme(void) {
+void drawSDTheme(void)
+{
   display->fillScreen(ILI9341_BLACK);
   display->fillRoundRect(10, -28, 300, 55, 10, ILI9341_GREENYELLOW);
   display->fillRoundRect(35, 30, 250, 20, 10, ILI9341_GREENYELLOW);
@@ -2455,13 +2460,13 @@ void drawSDTheme(void) {
   refreshMacroVal();
 }
 
-
-
-void nextLcdPage() {
-  SD.refresh = false;
-  SD.isMenuCreated = false;
+void nextLcdPage()
+{
+  SDCard.refresh = false;
+  SDCard.isMenuCreated = false;
   int resultPage = page.currentPage + 1;
-  if (resultPage > page.pageCount) {
+  if (resultPage > page.pageCount)
+  {
     resultPage = 1;
   }
   page.currentPage = resultPage;
@@ -2471,48 +2476,56 @@ void nextLcdPage() {
   page.itemChanged = true;
 }
 
-void goToMainPage() {
-  SD.refresh = false;
-  SD.isMenuCreated = false;
+void goToMainPage()
+{
+  SDCard.refresh = false;
+  SDCard.isMenuCreated = false;
   page.currentPage = 1;
   page.isInit = false;
   page.currentItem = 0;
   page.itemChanged = true;
 }
 
-void nextMenuItem() {
+void nextMenuItem()
+{
   int resultItem = page.currentItem + 1;
-  if (resultItem > SD.items.size() - 1) {
+  if (resultItem > SDCard.items.size() - 1)
+  {
     resultItem = 0;
   }
   page.currentItem = resultItem;
   page.itemChanged = true;
 }
 
-void prevMenuItem() {
+void prevMenuItem()
+{
   int resultItem = page.currentItem - 1;
-  if (resultItem == -1) {
-    resultItem = SD.items.size() - 1;
+  if (resultItem == -1)
+  {
+    resultItem = SDCard.items.size() - 1;
   }
   page.currentItem = resultItem;
   page.itemChanged = true;
 }
 
-void setMacroItem() {
+void setMacroItem()
+{
   char buffer[100];
-  auto strItem = SD.items.begin();
+  auto strItem = SDCard.items.begin();
   std::advance(strItem, page.currentItem);
   sprintf(buffer, "%s", strItem->c_str());
   currentValues.macro = buffer;
-  
+
   refreshMacroVal();
 }
 
-void prevLcdPage() {
+void prevLcdPage()
+{
   page.currentItem = 0;
   page.itemChanged = true;
   int resultPage = page.currentPage - 1;
-  if (resultPage == 0) {
+  if (resultPage == 0)
+  {
     resultPage = page.pageCount;
   }
   page.currentPage = resultPage;
@@ -2520,9 +2533,10 @@ void prevLcdPage() {
   page.isInit = false;
 }
 
-void runItem() {
+void runItem()
+{
   char buffer[100];
-  auto strItem = SD.items.begin();
+  auto strItem = SDCard.items.begin();
   std::advance(strItem, page.currentItem);
   sprintf(buffer, "$SD/RUN=%s", strItem->c_str());
   Serial1.write(buffer);
@@ -2530,7 +2544,8 @@ void runItem() {
   goToMainPage();
 }
 
-void runMacroItem() {
+void runMacroItem()
+{
   char buffer[100];
   sprintf(buffer, "$SD/RUN=%s", currentValues.macro.c_str());
   Serial1.write(buffer);
@@ -2539,8 +2554,10 @@ void runMacroItem() {
 }
 
 int startX = 60;
-void refreshXPos(void) {
-  if (!currentValues.isXSet) {
+void refreshXPos(void)
+{
+  if (!currentValues.isXSet)
+  {
     log_v("Refresh XPos");
     currentValues.isXSet = true;
 
@@ -2560,8 +2577,10 @@ void refreshXPos(void) {
   }
 }
 
-void refreshYPos(void) {
-  if (!currentValues.isYSet) {
+void refreshYPos(void)
+{
+  if (!currentValues.isYSet)
+  {
     log_v("Refresh YPos");
     currentValues.isYSet = true;
 
@@ -2581,8 +2600,10 @@ void refreshYPos(void) {
   }
 }
 
-void refreshZPos(void) {
-  if (!currentValues.isZSet) {
+void refreshZPos(void)
+{
+  if (!currentValues.isZSet)
+  {
     log_v("Refresh ZPos");
     currentValues.isZSet = true;
 
@@ -2602,8 +2623,10 @@ void refreshZPos(void) {
   }
 }
 
-void refreshAPos(void) {
-  if (!currentValues.isASet) {
+void refreshAPos(void)
+{
+  if (!currentValues.isASet)
+  {
     log_v("Refresh APos");
     currentValues.isASet = true;
 
@@ -2623,8 +2646,10 @@ void refreshAPos(void) {
   }
 }
 
-void refreshState(void) {
-  if (!currentValues.isStateSet) {
+void refreshState(void)
+{
+  if (!currentValues.isStateSet)
+  {
     log_v("Refresh State: %i", currentValues.state);
     currentValues.isStateSet = true;
     display->fillRoundRect(200, 205, 115, 25, 5, currentValues.stateColor);
@@ -2636,8 +2661,10 @@ void refreshState(void) {
   }
 }
 
-void refreshFeedRate(void) {
-  if (!currentValues.isFeedRateSet) {
+void refreshFeedRate(void)
+{
+  if (!currentValues.isFeedRateSet)
+  {
     currentValues.isFeedRateSet = true;
     display->fillRoundRect(240, 155, 70, 30, 4, ILI9341_BLACK);
     display->setFont(&FreeSerifBold9pt7b);
@@ -2648,8 +2675,10 @@ void refreshFeedRate(void) {
   }
 }
 
-void refreshSpindleRate(void) {
-  if (!currentValues.isSpindleRateSet) {
+void refreshSpindleRate(void)
+{
+  if (!currentValues.isSpindleRateSet)
+  {
     currentValues.isSpindleRateSet = true;
     display->fillRoundRect(240, 88, 70, 30, 4, ILI9341_BLACK);
     display->setFont(&FreeSerifBold9pt7b);
@@ -2660,8 +2689,10 @@ void refreshSpindleRate(void) {
   }
 }
 
-void refreshProgress(void) {
-  if (!currentValues.isProgressSet) {
+void refreshProgress(void)
+{
+  if (!currentValues.isProgressSet)
+  {
     currentValues.isProgressSet = true;
     display->fillRoundRect(240, 9, 70, 25, 4, ILI9341_BLACK);
     display->setFont(&FreeSerifBold9pt7b);
@@ -2677,8 +2708,10 @@ void refreshProgress(void) {
   }
 }
 
-void refreshOV(void) {
-  if (!currentValues.isFeedRateOVSET) {
+void refreshOV(void)
+{
+  if (!currentValues.isFeedRateOVSET)
+  {
     currentValues.isFeedRateOVSET = true;
     display->setFont(&FreeSerifBold9pt7b);
     display->setTextColor(ILI9341_WHITE);
@@ -2691,7 +2724,8 @@ void refreshOV(void) {
   }
 }
 
-void refresh(void) {
+void refresh(void)
+{
   log_v("Refresh Main Display");
 
   refreshXPos();
@@ -2702,16 +2736,19 @@ void refresh(void) {
   refreshFeedRate();
   refreshSpindleRate();
   refreshOV();
-  if (currentValues.state == Run) {
+  if (currentValues.state == Run)
+  {
     refreshProgress();
   }
 }
 
-void createMenuItems(void) {
+void createMenuItems(void)
+{
   int start = 75;
   int gap = 20;
   int counter = 0;
-  for (std::string item : SD.items) {
+  for (std::string item : SDCard.items)
+  {
     display->setTextColor(ILI9341_WHITE);
     display->setFont(&FreeSerifBold9pt7b);
     display->setTextSize(1);
@@ -2721,7 +2758,8 @@ void createMenuItems(void) {
   }
 }
 
-void refreshMenuCurser() {
+void refreshMenuCurser()
+{
   int start = 66;
   int gap = 20;
   int counter = 0;
@@ -2730,50 +2768,59 @@ void refreshMenuCurser() {
                          ILI9341_GREENYELLOW);
 }
 
-void displayTask(void *p) {
+void displayTask(void *p)
+{
   initDisplay(3);
   page.currentPage = 1;
   page.pageCount = 2;
-  while (true) {
-    switch (page.currentPage) {
-      case 1:  // main page
+  while (true)
+  {
+    switch (page.currentPage)
+    {
+    case 1: // main page
+    {
+      if (!page.isInit)
       {
-        if (!page.isInit) {
-          drawMainTheme();
-          page.isInit = true;
-        }
-        refresh();
-        vTaskDelay(80);
-        break;
+        drawMainTheme();
+        page.isInit = true;
       }
-      case 2:  // SD page
+      refresh();
+      vTaskDelay(80);
+      break;
+    }
+    case 2: // SD page
+    {
+      if (!page.isInit)
       {
-        if (!page.isInit) {
-          drawSDTheme();
-          SD.items.clear();
-          page.isInit = true;
+        drawSDTheme();
+        SDCard.items.clear();
+        page.isInit = true;
+      }
+      if (!SDCard.isMenuCreated)
+      {
+        if (SDCard.refresh)
+        {
+          SDCard.isMenuCreated = true;
+          page.currentItem = 0;
+          createMenuItems();
         }
-        if (!SD.isMenuCreated) {
-          if (SD.refresh) {
-            SD.isMenuCreated = true;
-            page.currentItem = 0;
-            createMenuItems();
-          }
-        }
-        if (page.itemChanged) {
-          page.itemChanged = false;
-          refreshMenuCurser();
-        }
+      }
+      if (page.itemChanged)
+      {
+        page.itemChanged = false;
+        refreshMenuCurser();
+      }
 
-        vTaskDelay(50);
-        break;
-      }
-      default:
-        break;
+      vTaskDelay(50);
+      break;
+    }
+    default:
+      break;
     }
   }
 }
 
-void displaySetup(void) {
+void displaySetup(void)
+{
   xTaskCreate(displayTask, "displayTask", 10 * 1024, NULL, 500, NULL);
 }
