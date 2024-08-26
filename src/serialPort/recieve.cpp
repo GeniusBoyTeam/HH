@@ -39,7 +39,7 @@ string cutExtraChar(string input)
   return s;
 }
 
-void setState(string state)
+void setState(string state = "DC")
 {
   log_v("state: %s", state.c_str());
   string stateNew = state;
@@ -98,6 +98,12 @@ void setState(string state)
   {
     currentValues.state = Cycle;
     currentValues.stateColor = 0xFFFF;
+  }
+  else if (strcmp(stateNew.c_str(), "DC") == 0)
+  {
+    currentValues.state = DC;
+    currentValues.stateColor = ILI9341_PINK;
+    currentValues.isStateSet = false;
   }
   else if (strcmp(stateNew.c_str(), "Sleep") == 0)
   {
@@ -333,6 +339,10 @@ void parseRecieved(string data)
   }
 }
 
+unsigned long lastRecievedTime = 0;
+int recievedTimeout = 2000;
+bool isDC = false;
+
 void recieveTask(void *p)
 {
   const byte numChars = 150;
@@ -341,10 +351,22 @@ void recieveTask(void *p)
   char endMarker = '\n';
   char rc;
   boolean newData = false;
+  setState();
+  lastRecievedTime = millis();
   while (true)
   {
+    if (millis() - lastRecievedTime > recievedTimeout && !isDC)
+    {
+      setDCState();
+      setState();
+      refresh();
+      isDC = true;
+    }
+
     while (Serial1.available() > 0 && newData == false)
     {
+      isDC = false;
+      lastRecievedTime = millis();
       rc = Serial1.read();
 
       if (rc != endMarker)

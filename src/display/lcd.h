@@ -21,9 +21,17 @@
 #define LCD_RST 35
 #define LCD_BACKLIGHT 41
 
-enum EChar { X = 0, Y = 1, Z = 2, A = 3, F = 4 };
+enum EChar
+{
+  X = 0,
+  Y = 1,
+  Z = 2,
+  A = 3,
+  F = 4
+};
 
-enum EState {
+enum EState
+{
   Idle = 0,
   Run,
   Jog,
@@ -34,10 +42,11 @@ enum EState {
   Check,
   Cycle,
   Sleep,
-  Startup  // extra state for refresh state on startup
+  DC // hand held is dc from grbl
 };
 
-struct refreshVal {
+struct refreshVal
+{
   std::string x;
   bool isXSet;
 
@@ -75,7 +84,8 @@ struct refreshVal {
   int stateColor;
 };
 
-struct pageProp {
+struct pageProp
+{
   int pageCount;
   int currentPage;
   int currentItem;
@@ -84,7 +94,8 @@ struct pageProp {
   bool isInit;
 };
 
-struct sdCard {
+struct sdCard
+{
   int freeSpace;
   int usedSpace;
   std::list<std::string> items;
@@ -104,5 +115,7 @@ void prevMenuItem(void);
 void runItem(void);
 void runMacroItem(void);
 void goToMainPage(void);
+void setDCState(void);
+void refresh(void);
 
-#endif  // HH_LCD
+#endif // HH_LCD

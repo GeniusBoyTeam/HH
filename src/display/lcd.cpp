@@ -5,8 +5,8 @@ refreshVal lastValues;
 pageProp page;
 sdCard SDCard;
 
-char *enumStates[10] = {"Idle", "Run", "Jog", "Alarm", "Door",
-                        "Home", "Hold", "Check", "Cycle", "Sleep"};
+char *enumStates[11] = {"Idle", "Run", "Jog", "Alarm", "Door",
+                        "Home", "Hold", "Check", "Cycle", "Sleep","DC"};
 
 Adafruit_ILI9341 *initDisplay(char rotate)
 {
@@ -21,6 +21,11 @@ Adafruit_ILI9341 *initDisplay(char rotate)
   a->setRotation(rotate);
   display = a;
   return a;
+}
+
+void setDCState(void)
+{
+  currentValues.state = DC;
 }
 
 void overWritePosition(EChar character, double value) {}
@@ -108,7 +113,7 @@ void drawMainTheme(void)
   // feedRate
 
   display->fillRoundRect(200, 205, 115, 25, 5, ILI9341_WHITE);
-  lastValues.state = Startup;
+  lastValues.state = DC;
   // state
 
   display->drawLine(195, 0, 195, 240, ILI9341_WHITE);
