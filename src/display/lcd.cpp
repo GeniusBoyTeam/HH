@@ -6,7 +6,7 @@ pageProp page;
 sdCard SDCard;
 
 char *enumStates[11] = {"Idle", "Run", "Jog", "Alarm", "Door",
-                        "Home", "Hold", "Check", "Cycle", "Sleep","DC"};
+                        "Home", "Hold", "Check", "Cycle", "Sleep", "DC"};
 
 Adafruit_ILI9341 *initDisplay(char rotate)
 {
@@ -104,11 +104,14 @@ void drawMainTheme(void)
 
   display->fillRoundRect(200, 139, 115, 62, 5, ILI9341_GREENYELLOW);
   display->fillRoundRect(205, 155, 30, 30, 4, ILI9341_BLACK);
-  display->fillRoundRect(240, 155, 70, 30, 4, ILI9341_BLACK);
+  display->fillRoundRect(240, 143, 70, 25, 4, ILI9341_BLACK);
+  display->fillRoundRect(240, 172, 70, 25, 4, ILI9341_BLACK);
   display->setFont(&FreeSerifBold9pt7b);
   display->setTextColor(ILI9341_WHITE);
   display->setTextSize(1);
-  display->setCursor(248, 175);
+  display->setCursor(248, 163);
+  display->print("0");
+  display->setCursor(248, 192);
   display->print("0");
   // feedRate
 
@@ -2671,12 +2674,15 @@ void refreshFeedRate(void)
   if (!currentValues.isFeedRateSet)
   {
     currentValues.isFeedRateSet = true;
-    display->fillRoundRect(240, 155, 70, 30, 4, ILI9341_BLACK);
+    display->fillRoundRect(240, 143, 70, 25, 4, ILI9341_BLACK);
+    display->fillRoundRect(240, 172, 70, 25, 4, ILI9341_BLACK);
     display->setFont(&FreeSerifBold9pt7b);
     display->setTextColor(ILI9341_WHITE);
     display->setTextSize(1);
-    display->setCursor(248, 175);
+    display->setCursor(248, 163);
     display->print(currentValues.feedRate.c_str());
+    display->setCursor(248, 192);
+    display->print(((String)(currentValues.jogSpeed)).c_str());
   }
 }
 

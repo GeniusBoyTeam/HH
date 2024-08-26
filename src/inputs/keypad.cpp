@@ -159,9 +159,21 @@ void keypadTask(void *p)
                   }
                   else if (currentValues.state == Idle)
                   {
-                    currentValues.jogSpeed =
-                        currentValues.jogSpeed +
-                        (currentValues.jogSpeed * 10 / 100);
+                    if ((currentValues.jogSpeed +(currentValues.jogSpeed * 10 / 100)) >= 10000)
+                    {
+                      currentValues.jogSpeed = 10000;
+                      currentValues.isFeedRateSet = false;
+                    } 
+                    else
+                    {
+                      if (currentValues.jogSpeed < 10000)
+                      {
+                        currentValues.jogSpeed =
+                            currentValues.jogSpeed +
+                            (currentValues.jogSpeed * 10 / 100);
+                        currentValues.isFeedRateSet = false;
+                      }
+                    }
                   }
                   beepBuzzer();
                   while (digitalRead(sotoon[j]) == 0)
@@ -179,9 +191,13 @@ void keypadTask(void *p)
                   }
                   else if (currentValues.state == Idle)
                   {
-                    currentValues.jogSpeed =
-                        currentValues.jogSpeed -
-                        (currentValues.jogSpeed * 10 / 100);
+                    if (currentValues.jogSpeed > 30)
+                    {
+                      currentValues.jogSpeed =
+                          currentValues.jogSpeed -
+                          (currentValues.jogSpeed * 10 / 100);
+                      currentValues.isFeedRateSet = false;
+                    }
                   }
                   beepBuzzer();
                   while (digitalRead(sotoon[j]) == 0)
