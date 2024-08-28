@@ -389,7 +389,7 @@ void recieveTask(void *p)
   lastRecievedTime = millis();
   while (true)
   {
-    if (millis() - lastRecievedTime > recievedTimeout && !isDC)
+    if (millis() - lastRecievedTime > recievedTimeout && !isDC && page.currentPage == 1)
     {
       setDCState();
       setState();
