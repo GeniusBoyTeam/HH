@@ -77,6 +77,8 @@ struct refreshVal
   int jogSpeed = 1000;
 
   bool alarm;
+  bool isMessageShow;
+  std::string message;
 
   std::string macro;
 

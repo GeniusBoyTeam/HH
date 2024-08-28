@@ -38,7 +38,7 @@ int16_t convertLocation(int start, int gap, int componentHeight, int number)
 void drawMainTheme(void)
 {
   display->fillScreen(ILI9341_BLACK);
-  int gap = 12;
+  int gap = 1;
   int start = 45;
   int componentHeght = 47;
   int startRects = 6;
@@ -115,11 +115,15 @@ void drawMainTheme(void)
   display->print("0");
   // feedRate
 
-  display->fillRoundRect(200, 205, 115, 25, 5, ILI9341_WHITE);
+  display->fillRoundRect(5, 205, 65, 25, 5, ILI9341_WHITE);
   lastValues.state = DC;
   // state
 
-  display->drawLine(195, 0, 195, 240, ILI9341_WHITE);
+  display->fillRoundRect(73, 205, 242, 25, 5, ILI9341_DARKGREY);
+  // message
+
+  display->drawLine(195, 0, 195, 200, ILI9341_WHITE);
+  display->drawLine(0, 200, 195, 200, ILI9341_WHITE);
 }
 
 static const uint16_t image_data_Image[20808] = {
@@ -2569,7 +2573,7 @@ void refreshXPos(void)
     log_v("Refresh XPos");
     currentValues.isXSet = true;
 
-    int gap = 12;
+    int gap = 1;
     int start = 45;
     int componentHeght = 47;
     int startRects = 6;
@@ -2592,7 +2596,7 @@ void refreshYPos(void)
     log_v("Refresh YPos");
     currentValues.isYSet = true;
 
-    int gap = 12;
+    int gap = 1;
     int start = 45;
     int componentHeght = 47;
     int startRects = 6;
@@ -2615,7 +2619,7 @@ void refreshZPos(void)
     log_v("Refresh ZPos");
     currentValues.isZSet = true;
 
-    int gap = 12;
+    int gap = 1;
     int start = 45;
     int componentHeght = 47;
     int startRects = 6;
@@ -2638,7 +2642,7 @@ void refreshAPos(void)
     log_v("Refresh APos");
     currentValues.isASet = true;
 
-    int gap = 12;
+    int gap = 1;
     int start = 45;
     int componentHeght = 47;
     int startRects = 6;
@@ -2660,12 +2664,27 @@ void refreshState(void)
   {
     log_v("Refresh State: %i", currentValues.state);
     currentValues.isStateSet = true;
-    display->fillRoundRect(200, 205, 115, 25, 5, currentValues.stateColor);
+    display->fillRoundRect(5, 205, 65, 25, 5, currentValues.stateColor);
     display->setFont(&FreeSerifBold9pt7b);
     display->setTextSize(1);
     display->setTextColor(ILI9341_BLACK);
-    display->setCursor(235, 223);
+    display->setCursor(10, 223);
     display->print(enumStates[currentValues.state]);
+  }
+}
+
+void refreshMesage(void)
+{
+  if (!currentValues.isMessageShow)
+  {
+    log_i("Refresh Message: %s", currentValues.message);
+    currentValues.isMessageShow = true;
+    display->fillRoundRect(73, 205, 242, 25, 5, ILI9341_DARKGREY);
+    display->setFont(&FreeSerifBold9pt7b);
+    display->setTextSize(1);
+    display->setTextColor(ILI9341_RED);
+    display->setCursor(78, 223);
+    display->print(currentValues.message.c_str());
   }
 }
 
@@ -2744,6 +2763,7 @@ void refresh(void)
   refreshZPos();
   refreshAPos();
   refreshState();
+  refreshMesage();
   refreshFeedRate();
   refreshSpindleRate();
   refreshOV();

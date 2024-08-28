@@ -86,7 +86,7 @@ void setState(string state = "DC")
   else if (strcmp(stateNew.c_str(), "Hold") == 0)
   {
     currentValues.state = Hold;
-    currentValues.stateColor = ILI9341_DARKGREY;
+    currentValues.stateColor = ILI9341_LIGHTGREY;
     currentValues.alarm = true;
   }
   else if (strcmp(stateNew.c_str(), "Check") == 0)
@@ -264,6 +264,18 @@ void setRunProgress(string progressVal)
   }
 }
 
+char *enumAlarmMessages[11] = {"None", "Hard Limit", "Soft Limit", "Abort Cycle", "Probe Fail Initial",
+                               "Probe Fail Contact", "Homing Fail Reset", "Homing Fail Door", "Homing Fail Pulloff", "Homing Fail Approach", "Spindle Control"};
+
+void setAlarmMessage(string alarmMessage)
+{
+  log_d("ALARM: %s", alarmMessage.c_str());
+  std::string secPart = splitString(alarmMessage.c_str(), ":").back();
+  currentValues.message = enumAlarmMessages[std::stoi(secPart)];
+  currentValues.isMessageShow = false;
+  log_i("ALARM MESSAGE IS ----> %s", currentValues.message.c_str());
+}
+
 void parseRecieved(string data)
 {
   // example input
@@ -335,6 +347,14 @@ void parseRecieved(string data)
           setFeedRateOV((splited.erase(0, 3)).c_str());
         }
       }
+    }
+    else if (isContain(data.c_str(), "error"))
+    {
+      log_i("ERROR: %s", data.c_str());
+    }
+    else if (isContain(data.c_str(), "ALARM"))
+    {
+      setAlarmMessage(data.c_str());
     }
   }
 }
