@@ -219,6 +219,8 @@ void keypadTask(void *p)
                 }
                 else if (strcmp(commandMap[i][j], "macro") == 0)
                 {
+                  Serial1.write("G10 L20 P0 X0 Y0 Z0 A0");
+                  Serial1.write("\n");
                   runMacroItem();
                   beepBuzzer();
                   while (digitalRead(sotoon[j]) == 0)
@@ -331,8 +333,10 @@ void keypadTask(void *p)
               }
               else if (strcmp(commandMapSDCard[i][j], "ok") == 0)
               {
-                runItem();
+                Serial1.write("G10 L20 P0 X0 Y0 Z0 A0");
+                Serial1.write("\n");
                 beepBuzzer();
+                runItem();
                 while (digitalRead(sotoon[j]) == 0)
                 {
                   vTaskDelay(1);
