@@ -144,6 +144,7 @@ void keypadTask(void *p)
                   vTaskDelay(100);
                   Serial1.write("$X");
                   Serial1.write("\n");
+                  clearMessage();
                   while (digitalRead(sotoon[j]) == 0)
                   {
                     vTaskDelay(1);
@@ -159,11 +160,11 @@ void keypadTask(void *p)
                   }
                   else if (currentValues.state == Idle)
                   {
-                    if ((currentValues.jogSpeed +(currentValues.jogSpeed * 10 / 100)) >= 10000)
+                    if ((currentValues.jogSpeed + (currentValues.jogSpeed * 10 / 100)) >= 10000)
                     {
                       currentValues.jogSpeed = 10000;
                       currentValues.isFeedRateSet = false;
-                    } 
+                    }
                     else
                     {
                       if (currentValues.jogSpeed < 10000)

@@ -276,6 +276,12 @@ void setAlarmMessage(string alarmMessage)
   log_i("ALARM MESSAGE IS ----> %s", currentValues.message.c_str());
 }
 
+void clearMessage()
+{
+  currentValues.message = "";
+  currentValues.isMessageShow = false;
+}
+
 void parseRecieved(string data)
 {
   // example input
