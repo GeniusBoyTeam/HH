@@ -264,6 +264,14 @@ void setRunProgress(string progressVal)
   }
 }
 
+void setErrorMessage(string errorMessage)
+{
+  log_d("ERROR: %s", errorMessage.c_str());
+  currentValues.message = errorMessage;
+  currentValues.isMessageShow = false;
+  log_i("ERROR MESSAGE IS ----> %s", currentValues.message.c_str());
+}
+
 char *enumAlarmMessages[11] = {"None", "Hard Limit", "Soft Limit", "Abort Cycle", "Probe Fail Initial",
                                "Probe Fail Contact", "Homing Fail Reset", "Homing Fail Door", "Homing Fail Pulloff", "Homing Fail Approach", "Spindle Control"};
 
@@ -356,7 +364,7 @@ void parseRecieved(string data)
     }
     else if (isContain(data.c_str(), "error"))
     {
-      log_i("ERROR: %s", data.c_str());
+      setErrorMessage(data.c_str());
     }
     else if (isContain(data.c_str(), "ALARM"))
     {
