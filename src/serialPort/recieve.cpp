@@ -290,6 +290,12 @@ void clearMessage()
   currentValues.isMessageShow = false;
 }
 
+void showMessage(string message)
+{
+  currentValues.message = message;
+  currentValues.isMessageShow = false;
+}
+
 void parseRecieved(string data)
 {
   // example input

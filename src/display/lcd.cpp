@@ -2551,6 +2551,7 @@ void runItem()
   auto strItem = SDCard.items.begin();
   std::advance(strItem, page.currentItem);
   sprintf(buffer, "$SD/RUN=%s", strItem->c_str());
+  showMessage(strItem->c_str());
   Serial1.write(buffer);
   Serial1.write("\n");
   goToMainPage();
