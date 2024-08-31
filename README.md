@@ -1,4 +1,4 @@
-![Handheld Controller](./docs/HH.jpg)
+![Handheld Controller](./docs/HH.png)
 # GRBL ESP32 Handheld Controller
 
 This repository contains the source code for a handheld device designed to interface with GRBL ESP32 via a serial port. The handheld allows you to control your CNC machine, similar to the functionality provided by the GRBL web server and desktop software like GRBL Plotter. 
