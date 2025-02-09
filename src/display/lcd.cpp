@@ -4,6 +4,8 @@ refreshVal currentValues;
 refreshVal lastValues;
 pageProp page;
 sdCard SDCard;
+syncAxis SyncAxis;
+Preferences preferences;
 
 char *enumStates[11] = {"Idle", "Run", "Jog", "Alarm", "Door",
                         "Home", "Hold", "Check", "Cycle", "Sleep", "DC"};
@@ -174,6 +176,25 @@ void drawSDTheme(void)
   refreshMacroVal();
 }
 
+void drawSyncTheme(void)
+{
+  SyncAxis.isMenuCreated = false;
+  display->fillScreen(ILI9341_BLACK);
+  display->fillRoundRect(10, -28, 300, 55, 10, ILI9341_GREENYELLOW);
+  display->fillRoundRect(35, 30, 250, 20, 10, ILI9341_GREENYELLOW);
+  display->setTextColor(ILI9341_BLACK);
+  display->setTextSize(1);
+  display->setCursor(115, 18);
+  display->setFont(&FreeSerifBold12pt7b);
+  display->print("Sync Axis");
+
+  display->setTextColor(ILI9341_BLACK);
+  display->setTextSize(1);
+  display->setCursor(40, 45);
+  display->setFont(&FreeSerifBold9pt7b);
+  display->print("Press 'Fn' to chnage setting ...");
+}
+
 void nextLcdPage()
 {
   SDCard.refresh = false;
@@ -184,10 +205,10 @@ void nextLcdPage()
     resultPage = 1;
   }
   page.currentPage = resultPage;
-  log_v("CurrentPage= %i", page.currentPage);
+  log_i("CurrentPage= %i", page.currentPage);
   page.isInit = false;
-  page.currentItem = 0;
   page.itemChanged = true;
+  page.currentItem = 0;
 }
 
 void goToMainPage()
@@ -203,9 +224,18 @@ void goToMainPage()
 void nextMenuItem()
 {
   int resultItem = page.currentItem + 1;
-  if (resultItem > SDCard.items.size() - 1)
+  if (page.currentPage == 2)
   {
-    resultItem = 0;
+    if (resultItem > SDCard.items.size() - 1)  
+    {
+      resultItem = 0;
+    }
+  }
+  else if (page.currentPage ==3)
+  {
+    if (resultItem > (SyncAxis.items.size() - 1)) {
+      resultItem = 0;
+    } 
   }
   page.currentItem = resultItem;
   page.itemChanged = true;
@@ -214,10 +244,21 @@ void nextMenuItem()
 void prevMenuItem()
 {
   int resultItem = page.currentItem - 1;
-  if (resultItem == -1)
+  if (page.currentPage == 2)
   {
-    resultItem = SDCard.items.size() - 1;
+    if (resultItem == -1)
+    {
+      resultItem = SDCard.items.size() - 1;
+    }
   }
+  else if (page.currentPage ==3)
+  {
+    if (resultItem == -1)
+    {
+      resultItem = SyncAxis.items.size() - 1;
+    } 
+  }
+  
   page.currentItem = resultItem;
   page.itemChanged = true;
 }
@@ -380,7 +421,7 @@ void refreshMesage(void)
 {
   if (!currentValues.isMessageShow)
   {
-    log_i("Refresh Message: %s", currentValues.message);
+    log_i("Refresh Message: %s", currentValues.message.c_str());
     currentValues.isMessageShow = true;
     display->fillRoundRect(73, 205, 242, 25, 5, ILI9341_DARKGREY);
     display->setFont(&FreeSerifBold9pt7b);
@@ -492,21 +533,127 @@ void createMenuItems(void)
   }
 }
 
+void fillCurentValues()
+{
+  switch (currentValues.syncAxis)
+  {
+  case 0:
+  {
+    currentValues.xSyncWith = "";
+    currentValues.ySyncWith = "";
+    currentValues.zSyncWith = "";
+    currentValues.aSyncWith = "";
+    break;
+  }
+  case 1:
+  {
+    currentValues.xSyncWith = "Z";
+    currentValues.ySyncWith = "A";
+    currentValues.zSyncWith = "X";
+    currentValues.aSyncWith = "Y";
+    break;
+  }
+  case 2:
+  {
+    currentValues.xSyncWith = "A";
+    currentValues.ySyncWith = "Z";
+    currentValues.zSyncWith = "Y";
+    currentValues.aSyncWith = "X";
+    break;
+  }
+  case 3:
+  {
+    currentValues.xSyncWith = "";
+    currentValues.ySyncWith = "A";
+    currentValues.zSyncWith = "";
+    currentValues.aSyncWith = "Y";
+    break;
+  }
+  case 4:
+  {
+    currentValues.xSyncWith = "";
+    currentValues.ySyncWith = "Z";
+    currentValues.zSyncWith = "Y";
+    currentValues.aSyncWith = "";
+    break;
+  }
+  case 5:
+  {
+    currentValues.xSyncWith = "A";
+    currentValues.ySyncWith = "";
+    currentValues.zSyncWith = "";
+    currentValues.aSyncWith = "X";
+    break;
+  }
+  case 6:
+  {
+    currentValues.xSyncWith = "Z";
+    currentValues.ySyncWith = "";
+    currentValues.zSyncWith = "X";
+    currentValues.aSyncWith = "";
+    break;
+  }
+  default:
+    break;
+  }
+}
+
+void selectSyncItem()
+{
+  currentValues.syncAxis = page.currentItem;
+  preferences.putUInt("syncAxis", page.currentItem);
+  fillCurentValues();
+}
+
+void showSyncAxisItems()
+{
+  page.currentItem = currentValues.syncAxis;
+  int start = 75;
+  int gap = 20;
+  int counter = 0;
+  for (std::string item : SyncAxis.items)
+  {
+    display->setTextColor(ILI9341_WHITE);
+    display->setFont(&FreeSerifBold9pt7b);
+    display->setTextSize(1);
+    display->setCursor(40, start + (gap * counter));
+    display->print(item.c_str());
+    counter++;
+  }
+  SyncAxis.isMenuCreated = true;
+  page.itemChanged = true;
+}
+
+void fillSyncAxisItems()
+{
+  int syncAxis = preferences.getUInt("syncAxis", 0);
+  currentValues.syncAxis =  syncAxis;
+  fillCurentValues();
+  SyncAxis.items.push_back("X->none      Y->none");
+  SyncAxis.items.push_back("X->Z           Y->A   ");
+  SyncAxis.items.push_back("X->A           Y->Z   ");
+  SyncAxis.items.push_back("X->none      Y->A   ");
+  SyncAxis.items.push_back("X->none      Y->Z   ");
+  SyncAxis.items.push_back("X->A           Y->none");
+  SyncAxis.items.push_back("X->Z           Y->none");
+}
+
 void refreshMenuCurser()
 {
   int start = 66;
   int gap = 20;
   int counter = 0;
-  display->fillRect(17, 60, 20, 130, ILI9341_BLACK);
-  display->fillRoundRect(17, start + (gap * page.currentItem), 18, 5, 2,
-                         ILI9341_GREENYELLOW);
+  display->fillRect(17, 60, 20, 160, ILI9341_BLACK);
+  display->fillRoundRect(17, start + (gap * page.currentItem), 18, 5, 2,ILI9341_GREENYELLOW);
 }
 
 void displayTask(void *p)
 {
+  preferences.begin("HH", false); 
   initDisplay(3);
+  fillSyncAxisItems();
   page.currentPage = 1;
-  page.pageCount = 2;
+  page.pageCount = 3;
   while (true)
   {
     switch (page.currentPage)
@@ -518,8 +665,11 @@ void displayTask(void *p)
         drawMainTheme();
         page.isInit = true;
       }
-      refresh();
-      vTaskDelay(80);
+      else
+      {
+        refresh();
+      }
+      vTaskDelay(100);
       break;
     }
     case 2: // SD page
@@ -544,7 +694,24 @@ void displayTask(void *p)
         page.itemChanged = false;
         refreshMenuCurser();
       }
-
+      vTaskDelay(50);
+      break;
+    }
+    case 3: //Sync Axis
+    {
+      if (!page.isInit)
+      {
+        drawSyncTheme();
+        page.isInit = true;
+      }
+      if (SyncAxis.isMenuCreated)
+      {
+        if (page.itemChanged)
+        {
+          page.itemChanged = false;
+          refreshMenuCurser();
+        }
+      }
       vTaskDelay(50);
       break;
     }

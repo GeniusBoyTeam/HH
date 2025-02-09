@@ -7,6 +7,7 @@
 #include <Fonts/FreeSerifBold18pt7b.h>
 #include <Fonts/FreeSerifBold24pt7b.h>
 #include <Fonts/FreeSerifBold9pt7b.h>
+#include "Preferences.h"
 
 #include <iostream>
 #include <list>
@@ -49,15 +50,19 @@ struct refreshVal
 {
   std::string x;
   bool isXSet;
+  String xSyncWith;
 
   std::string y;
   bool isYSet;
+  String ySyncWith;
 
   std::string z;
   bool isZSet;
+  String zSyncWith;
 
   std::string a;
   bool isASet;
+  String aSyncWith;
 
   std::string feedRate;
   bool isFeedRateSet;
@@ -84,6 +89,8 @@ struct refreshVal
 
   int memoryMount;
   int stateColor;
+
+  int syncAxis;
 };
 
 struct pageProp
@@ -105,6 +112,13 @@ struct sdCard
   bool isMenuCreated = false;
 };
 
+struct syncAxis
+{
+  std::list<std::string> items;
+  bool refresh = false;
+  bool isMenuCreated = false;
+};
+
 static Adafruit_ILI9341 *display = NULL;
 void displaySetup(void);
 void drawMainTheme(void);
@@ -115,9 +129,12 @@ void prevLcdPage(void);
 void nextMenuItem(void);
 void prevMenuItem(void);
 void runItem(void);
+void showSyncAxisItems(void);
+void selectSyncItem(void);
 void runMacroItem(void);
 void goToMainPage(void);
 void setDCState(void);
 void refresh(void);
+void fillCurentValues();
 
 #endif // HH_LCD
