@@ -30,13 +30,13 @@ char *commandMap[6][4] = {
 
 #ifdef KEYPAD_GB
 char *commandMap[6][4] = {
-    {"$J=G91 G21 Y3000", "$J=G91 G21 B1000", "$J=G91 G21 Z1000",
-     "$J=G91 G21 X3000"},                                                // 0
-    {"$J=G91 G21 Z-1000", "$J=G91 G21 Y-3000", "", "$J=G91 G21 X-3000"}, // 1
-    {"$J=G91 G21 B-1000", "0x92", "0x91", "ctrl-x"},                     // 2
-    {"$X", "~", "$H", "nextPage"},                                       // 3
-    {"G10 L20 P0 X0 Y0 Z0 B0", "sp+", "sp-", "!"},                       // 4
-    {"spEnable", "mist", "fn", "macro"}                                  // 5
+    {"$J=Y+", "$J=A+", "$J=Z+", "$J=X+"},          // 0
+    {"$J=Z-", "$J=Y-", "", "$J=X-"},               // 1
+    {"$J=A-", "0x92", "0x91", "ctrl-x"},           // 2
+    {"$X", "~", "$H", "nextPage"},                 // 3
+    {"G10 L20 P0 X0 Y0 Z0 A0", "sp+", "sp-", "!"}, // 4
+    {"spEnable", "mist", "fn", "macro"}            // 5
+
 };
 
 char *commandMapSDCard[6][4] = {
@@ -47,9 +47,67 @@ char *commandMapSDCard[6][4] = {
     {"", "", "", ""},           // 4
     {"", "", "", "macro"}       // 5
 };
+
+char *commandMapSync[6][4] = {
+  {"Up", "", "", "Right"},    // 0
+  {"", "Down", "ok", "left"}, // 1
+  {"", "", "", ""},           // 2
+  {"", "", "", "nextPage"},   // 3
+  {"", "", "", ""},           // 4
+  {"", "", "fn", ""}       // 5
+};
 #endif
 
-void sendCommand(char *command) {}
+String checkSyncAxis(char* command, char* step)
+{
+  char buffer[50];            
+  String sign = isContain(command,"-") ? "-" : "+";
+  if (isContain(command,"X"))
+  {
+    if (currentValues.xSyncWith != "")
+    {
+      sprintf(buffer, "$J=G91 G21 X%s%s %s%s%s F%i",sign,step ,currentValues.xSyncWith,sign ,step ,currentValues.jogSpeed);
+    }
+    else
+    {
+      sprintf(buffer, "$J=G91 G21 X%s%s F%i",sign,step ,currentValues.jogSpeed);
+    }
+  }
+  else if (isContain(command,"Y"))
+  {
+    if (currentValues.ySyncWith != "")
+    {
+      sprintf(buffer, "$J=G91 G21 Y%s%s %s%s%s F%i",sign,step ,currentValues.ySyncWith ,sign,step ,currentValues.jogSpeed);
+    }
+    else
+    {
+      sprintf(buffer, "$J=G91 G21 Y%s%s F%i",sign,step ,currentValues.jogSpeed);
+    }
+  }
+  else if (isContain(command,"Z"))
+  {
+    if (currentValues.zSyncWith != "")
+    {
+      sprintf(buffer, "$J=G91 G21 Z%s%s %s%s%s F%i",sign,step ,currentValues.zSyncWith ,sign,step ,currentValues.jogSpeed);
+    }
+    else
+    {
+      sprintf(buffer, "$J=G91 G21 Z%s%s F%i",sign,step ,currentValues.jogSpeed);
+    }
+  }
+  else if (isContain(command,"A"))
+  {
+    if (currentValues.aSyncWith != "")
+    {
+      sprintf(buffer, "$J=G91 G21 A%s%s %s%s%s F%i",sign,step ,currentValues.aSyncWith ,sign,step ,currentValues.jogSpeed);
+    }
+    else
+    {
+      sprintf(buffer, "$J=G91 G21 A%s%s F%i",sign,step ,currentValues.jogSpeed);
+    }
+  }
+  return String(buffer);
+}
 
 void keypadTask(void *p)
 {
@@ -93,16 +151,13 @@ void keypadTask(void *p)
 
               if (isContain(commandMap[i][j], "$J"))
               {
-                char buffer[30];
-                sprintf(buffer, "%s F%i", commandMap[i][j],
-                        currentValues.jogSpeed);
-                Serial1.write(buffer);
+                String jogCommand = checkSyncAxis(commandMap[i][j],"2000");
+                Serial1.write(jogCommand.c_str());
                 Serial1.write("\n");
                 while (digitalRead(sotoon[j]) == 0)
                 {
                   vTaskDelay(1);
                 }
-
                 vTaskDelay(10);
                 Serial1.write(0x85);
                 Serial1.write("\n");
@@ -363,9 +418,62 @@ void keypadTask(void *p)
                 }
                 continue;
               }
-              else if (strcmp(commandMapSDCard[i][j], "macro") == 0)
+              else if (strcmp(commandMapSync[i][j], "macro") == 0)
               {
                 setMacroItem();
+                beepBuzzer();
+                while (digitalRead(sotoon[j]) == 0)
+                {
+                  vTaskDelay(1);
+                }
+                continue;
+              }
+            }
+            else if (page.currentPage == 3)
+            {
+              if (strcmp(commandMapSync[i][j], "nextPage") == 0)
+              {
+                nextLcdPage();
+                beepBuzzer();
+                while (digitalRead(sotoon[j]) == 0)
+                {
+                  vTaskDelay(1);
+                }
+                continue;
+              }
+              else if (strcmp(commandMapSync[i][j], "ok") == 0)
+              {
+                selectSyncItem();
+                beepBuzzer();
+                while (digitalRead(sotoon[j]) == 0)
+                {
+                  vTaskDelay(1);
+                }
+                continue;
+              }
+              else if (strcmp(commandMapSync[i][j], "Down") == 0)
+              {
+                nextMenuItem();
+                beepBuzzer();
+                while (digitalRead(sotoon[j]) == 0)
+                {
+                  vTaskDelay(1);
+                }
+                continue;
+              }
+              else if (strcmp(commandMapSync[i][j], "Up") == 0)
+              {
+                prevMenuItem();
+                beepBuzzer();
+                while (digitalRead(sotoon[j]) == 0)
+                {
+                  vTaskDelay(1);
+                }
+                continue;
+              }
+              else if (strcmp(commandMapSync[i][j], "fn") == 0)
+              {
+                showSyncAxisItems();
                 beepBuzzer();
                 while (digitalRead(sotoon[j]) == 0)
                 {
