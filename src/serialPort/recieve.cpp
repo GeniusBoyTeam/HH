@@ -181,7 +181,7 @@ void setPositions(string MPos)
       }
       break;
     }
-    case 4:
+    case 3:
     {
       currentValues.a = (positionsList.front()).c_str();
       String mamad = String(currentValues.a.c_str());
