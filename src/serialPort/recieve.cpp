@@ -181,7 +181,7 @@ void setPositions(string MPos)
       }
       break;
     }
-    case 3:
+    case 4:
     {
       currentValues.a = (positionsList.front()).c_str();
       String mamad = String(currentValues.a.c_str());
@@ -312,9 +312,14 @@ void parseRecieved(string data)
       if (allFiles.size() == 2) // import just root file
       {
         if (isContain(allFiles.back().c_str(), "TAP") ||
+            isContain(allFiles.back().c_str(), "Tap") ||
             isContain(allFiles.back().c_str(), "tap") ||
+            isContain(allFiles.back().c_str(), "ngc") ||
+            isContain(allFiles.back().c_str(), "NGC") ||
+            isContain(allFiles.back().c_str(), "gcode") ||
+            isContain(allFiles.back().c_str(), "Gcode") ||
             isContain(allFiles.back().c_str(),
-                      "Tap")) // import just .TAP files
+                      "GCODE")) // import just .TAP files
         {
           SDCard.items.push_back(allFiles.back().c_str());
         }

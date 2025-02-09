@@ -36,6 +36,7 @@ char *commandMap[6][4] = {
     {"$X", "~", "$H", "nextPage"},                 // 3
     {"G10 L20 P0 X0 Y0 Z0 A0", "sp+", "sp-", "!"}, // 4
     {"spEnable", "mist", "fn", "macro"}            // 5
+
 };
 
 char *commandMapSDCard[6][4] = {
@@ -179,7 +180,7 @@ void keypadTask(void *p)
                   }
                   continue;
                 }
-                else if (strcmp(commandMap[i][j], "G10 L20 P0 X0 Y0 Z0 A0") ==
+                else if (strcmp(commandMap[i][j], "G10 L20 P0 X0 Y0 Z0 B0") ==
                          0)
                 {
                   Serial1.write(commandMap[i][j]);
@@ -305,7 +306,7 @@ void keypadTask(void *p)
                   }
                   continue;
                 }
-                else if (strcmp(commandMap[i][j], "sp+") == 0)
+                else if (strcmp(commandMap[i][j], "sp-") == 0)
                 {
                   int isEnable = currentValues.spindleRate.compare("0");
                   if (isEnable)
@@ -320,7 +321,7 @@ void keypadTask(void *p)
                   }
                   continue;
                 }
-                else if (strcmp(commandMap[i][j], "sp-") == 0)
+                else if (strcmp(commandMap[i][j], "sp+") == 0)
                 {
                   int isEnable = currentValues.spindleRate.compare("0");
                   if (isEnable)
