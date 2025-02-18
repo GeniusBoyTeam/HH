@@ -300,7 +300,7 @@ void parseRecieved(string data)
 {
   // example input
   //<Door:0|MPos:0.000,0.000,0.000,0.000|FS:0,0|Pn:P|WCO:0.000,0.000,0.000,0.000>
-  log_d("RECIEVED: %s", data.c_str());
+  log_v("RECIEVED: %s", data.c_str());
   if (page.currentPage == 2 && !SDCard.refresh)
   {
     if (isContain(data.c_str(), "FILE"))

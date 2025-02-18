@@ -1,2 +1,4 @@
 // #define KEYPAD_MATRIX
 #define KEYPAD_GB
+
+#define PREFERENCES_NAME "HH"
