@@ -265,7 +265,7 @@ void keypadTask(void *p)
                 else if (strcmp(commandMap[i][j], "nextPage") == 0)
                 {
                   nextLcdPage();
-                  beepBuzzer();
+                  // beepBuzzer();
                   while (digitalRead(sotoon[j]) == 0)
                   {
                     vTaskDelay(1);
@@ -286,8 +286,20 @@ void keypadTask(void *p)
                 }
                 else if (strcmp(commandMap[i][j], "mist") == 0)
                 {
-                  Serial1.write("M7");
-                  Serial1.write("\n");
+                  if (!currentValues.isM7)
+                  {
+                    log_i("M7");
+                    Serial1.write("M7");
+                    Serial1.write("\n");
+                  } 
+                  else 
+                  {
+                    log_i("M9");
+                    Serial1.write("M9");
+                    Serial1.write("\n");
+                  }
+                  currentValues.isM7 = !currentValues.isM7;
+                  
                   beepBuzzer();
                   while (digitalRead(sotoon[j]) == 0)
                   {
@@ -297,8 +309,6 @@ void keypadTask(void *p)
                 }
                 else if (strcmp(commandMap[i][j], "fn") == 0)
                 {
-                  Serial1.write("M9");
-                  Serial1.write("\n");
                   beepBuzzer();
                   while (digitalRead(sotoon[j]) == 0)
                   {
@@ -379,7 +389,7 @@ void keypadTask(void *p)
               if (strcmp(commandMapSDCard[i][j], "nextPage") == 0)
               {
                 nextLcdPage();
-                beepBuzzer();
+                // beepBuzzer();
                 while (digitalRead(sotoon[j]) == 0)
                 {
                   vTaskDelay(1);
@@ -434,7 +444,7 @@ void keypadTask(void *p)
               if (strcmp(commandMapSync[i][j], "nextPage") == 0)
               {
                 nextLcdPage();
-                beepBuzzer();
+                // beepBuzzer();
                 while (digitalRead(sotoon[j]) == 0)
                 {
                   vTaskDelay(1);

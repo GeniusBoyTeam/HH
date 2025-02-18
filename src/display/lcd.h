@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <list>
+#include "config.h"
 
 #include "main.h"
 
@@ -91,6 +92,9 @@ struct refreshVal
   int stateColor;
 
   int syncAxis;
+  bool isSyncAxisSet;
+
+  bool isM7;
 };
 
 struct pageProp
