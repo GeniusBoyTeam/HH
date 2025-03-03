@@ -780,6 +780,7 @@ void runItem()
   char buffer[100];
   auto strItem = SDCard.items.begin();
   std::advance(strItem, page.currentItem);
+  log_i("run file:%s",strItem->c_str());
   sprintf(buffer, "$SD/RUN=%s", strItem->c_str());
   showMessage(strItem->c_str());
   Serial1.write(buffer);

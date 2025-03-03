@@ -272,16 +272,25 @@ void setErrorMessage(string errorMessage)
   log_i("ERROR MESSAGE IS ----> %s", currentValues.message.c_str());
 }
 
-char *enumAlarmMessages[11] = {"None", "Hard Limit", "Soft Limit", "Abort Cycle", "Probe Fail Initial",
-                               "Probe Fail Contact", "Homing Fail Reset", "Homing Fail Door", "Homing Fail Pulloff", "Homing Fail Approach", "Spindle Control"};
+string enumAlarmMessages[12] = {" None]", " Hard Limit]", " Soft Limit]", " Abort Cycle]", "  Probe Fail Initial]",
+                               " Probe Fail Contact]", " Homing Fail Reset]", " Homing Fail Door]", " Homing Fail Pulloff]", " Homing Fail Approach]", " Spindle Control]"," Unhomed]"};
+
+
+int findIndex(const std::string& message) {
+    for (int i = 0; i < 12; i++) {
+        if (enumAlarmMessages[i] == message) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 void setAlarmMessage(string alarmMessage)
 {
-  log_d("ALARM: %s", alarmMessage.c_str());
+  log_i("ALARM: %s", alarmMessage.c_str());
   std::string secPart = splitString(alarmMessage.c_str(), ":").back();
-  currentValues.message = enumAlarmMessages[std::stoi(secPart)];
+  currentValues.message = findIndex(secPart);
   currentValues.isMessageShow = false;
-  log_i("ALARM MESSAGE IS ----> %s", currentValues.message.c_str());
 }
 
 void clearMessage()
@@ -300,16 +309,19 @@ void parseRecieved(string data)
 {
   // example input
   //<Door:0|MPos:0.000,0.000,0.000,0.000|FS:0,0|Pn:P|WCO:0.000,0.000,0.000,0.000>
-  log_v("RECIEVED: %s", data.c_str());
   if (page.currentPage == 2 && !SDCard.refresh)
   {
+    log_i("RECIEVED: %s", data.c_str());
     if (isContain(data.c_str(), "FILE"))
     {
       // Example File --->   [FILE:/System Volume
       // Information/WPSettings.dat|SIZE:12]
       std::string firstLayer = splitString(data.c_str(), "|").front();
-      std::list<string> allFiles = splitString(firstLayer.c_str(), "/");
-      if (allFiles.size() == 2) // import just root file
+      std::string secondLayer = splitString(firstLayer                                                                                  .c_str(), ": ").back();
+      log_i("oftad too:%s",secondLayer.c_str());
+      std::list<string> allFiles = splitString(secondLayer.c_str(), "/");
+      log_i("oftad too:%i",allFiles.size());
+      if (allFiles.size() == 1) // import just root file
       {
         if (isContain(allFiles.back().c_str(), "TAP") ||
             isContain(allFiles.back().c_str(), "Tap") ||
@@ -321,11 +333,12 @@ void parseRecieved(string data)
             isContain(allFiles.back().c_str(),
                       "GCODE")) // import just .TAP files
         {
-          SDCard.items.push_back(allFiles.back().c_str());
+          string oftad = allFiles.back().c_str();
+          SDCard.items.push_back(oftad);
         }
       }
     }
-    else if (isContain(data.c_str(), "SD"))
+    else if (isContain(data.c_str(), "/sd"))
     {
       SDCard.refresh = true;
     }
