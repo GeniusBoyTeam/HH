@@ -2,3 +2,4 @@
 #define KEYPAD_GB
 
 #define PREFERENCES_NAME "HH"
+#define FILE_PER_PAGE 7

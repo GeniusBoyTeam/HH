@@ -305,23 +305,27 @@ void showMessage(string message)
   currentValues.isMessageShow = false;
 }
 
+const int filesPerPage = 6;     // تعداد فایل در هر صفحه
+
 void parseRecieved(string data)
 {
   // example input
   //<Door:0|MPos:0.000,0.000,0.000,0.000|FS:0,0|Pn:P|WCO:0.000,0.000,0.000,0.000>
+  log_v("RECIEVED: %s", data.c_str());
   if (page.currentPage == 2 && !SDCard.refresh)
   {
-    log_i("RECIEVED: %s", data.c_str());
     if (isContain(data.c_str(), "FILE"))
     {
       // Example File --->   [FILE:/System Volume
       // Information/WPSettings.dat|SIZE:12]
       std::string firstLayer = splitString(data.c_str(), "|").front();
-      std::string secondLayer = splitString(firstLayer                                                                                  .c_str(), ": ").back();
-      log_i("oftad too:%s",secondLayer.c_str());
-      std::list<string> allFiles = splitString(secondLayer.c_str(), "/");
-      log_i("oftad too:%i",allFiles.size());
-      if (allFiles.size() == 1) // import just root file
+      // std::string secondLayer = splitString(firstLayer                                                                                  .c_str(), ": ").back();
+      // log_i("oftad too:%s",secondLayer.c_str());
+      // std::list<string> allFiles = splitString(secondLayer.c_str(), "/");
+      // log_i("oftad too:%i",allFiles.size());
+      // if (allFiles.size() == 1) // import just root file
+      std::list<string> allFiles = splitString(firstLayer.c_str(), "/");
+      if (allFiles.size() == 2) // import just root file
       {
         if (isContain(allFiles.back().c_str(), "TAP") ||
             isContain(allFiles.back().c_str(), "Tap") ||
@@ -333,13 +337,18 @@ void parseRecieved(string data)
             isContain(allFiles.back().c_str(),
                       "GCODE")) // import just .TAP files
         {
-          string oftad = allFiles.back().c_str();
-          SDCard.items.push_back(oftad);
+          SDCard.items.push_back(allFiles.back().c_str());
+          // string oftad = allFiles.back().c_str();
+          // SDCard.items.push_back(oftad);
         }
       }
     }
-    else if (isContain(data.c_str(), "/sd"))
+    else if (isContain(data.c_str(), "SD"))
     {
+      SDCard.curentPage = 0;
+      SDCard.totalFiles = SDCard.items.size();
+      SDCard.pageCount = (SDCard.totalFiles + FILE_PER_PAGE - 1) / FILE_PER_PAGE;
+      log_i("Count of file is --> %i",SDCard.totalFiles);
       SDCard.refresh = true;
     }
   }
@@ -398,12 +407,12 @@ void parseRecieved(string data)
 }
 
 unsigned long lastRecievedTime = 0;
-int recievedTimeout = 2000;
+int recievedTimeout = 3000;
 bool isDC = false;
 
 void recieveTask(void *p)
 {
-  const byte numChars = 150;
+  const byte numChars = 1024;
   char receivedChars[numChars];
   static byte ndx = 0;
   char endMarker = '\n';
@@ -413,40 +422,9 @@ void recieveTask(void *p)
   lastRecievedTime = millis();
   while (true)
   {
-    if (millis() - lastRecievedTime > recievedTimeout && !isDC && page.currentPage == 1)
-    {
-      setDCState();
-      setState();
-      refresh();
-      isDC = true;
-    }
+    while (Serial1.available()) 
+      parseRecieved(Serial1.readStringUntil('\n').c_str());
 
-    while (Serial1.available() > 0 && newData == false)
-    {
-      isDC = false;
-      lastRecievedTime = millis();
-      rc = Serial1.read();
-
-      if (rc != endMarker)
-      {
-        receivedChars[ndx] = rc;
-        ndx++;
-        if (ndx >= numChars)
-        {
-          ndx = numChars - 1;
-        }
-      }
-      else
-      {
-        // Do something with recieved data...
-        parseRecieved(getString(receivedChars, ndx));
-        //..................................
-        receivedChars[ndx] = '\0';
-        ndx = 0;
-        newData = true;
-      }
-      newData = false;
-    }
-    vTaskDelay(50);
+    vTaskDelay(20);
   }
 }

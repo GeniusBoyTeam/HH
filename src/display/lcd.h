@@ -114,6 +114,11 @@ struct sdCard
   std::list<std::string> items;
   bool refresh = false;
   bool isMenuCreated = false;
+
+  int totalFiles;
+  int pageCount;
+  int curentPage;
+  int curentPageItemCounts;
 };
 
 struct syncAxis

@@ -428,7 +428,7 @@ void keypadTask(void *p)
                 }
                 continue;
               }
-              else if (strcmp(commandMapSync[i][j], "macro") == 0)
+              else if (strcmp(commandMapSDCard[i][j], "macro") == 0)
               {
                 setMacroItem();
                 beepBuzzer();

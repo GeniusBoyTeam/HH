@@ -509,6 +509,11 @@ Adafruit_ILI9341 *initDisplay(char rotate)
   return a;
 }
 
+std::string truncateWithEllipsis(const std::string& input, size_t maxLength) {
+  if (input.length() <= maxLength) return input;
+  return input.substr(0, maxLength - 3) + "...";
+}
+
 void setDCState(void)
 {
   currentValues.state = DC;
@@ -639,7 +644,7 @@ void refreshMacroVal(void)
   display->setTextSize(1);
   display->setCursor(108, 45);
   display->setFont(&FreeSerifBold9pt7b);
-  display->print(currentValues.macro.c_str());
+  display->print(truncateWithEllipsis(currentValues.macro,20).c_str());
 }
 
 void drawSDTheme(void)
@@ -647,6 +652,7 @@ void drawSDTheme(void)
   display->fillScreen(ILI9341_BLACK);
   display->fillRoundRect(10, -28, 300, 55, 10, ILI9341_GREENYELLOW);
   display->fillRoundRect(35, 30, 250, 20, 10, ILI9341_GREENYELLOW);
+  display->fillRoundRect(35, 210, 250, 20, 10, ILI9341_GREENYELLOW);
   display->setTextColor(ILI9341_BLACK);
   display->setTextSize(1);
   display->setCursor(85, 18);
@@ -659,6 +665,12 @@ void drawSDTheme(void)
   display->setCursor(40, 45);
   display->setFont(&FreeSerifBold9pt7b);
   display->print("Macro :");
+
+  display->setTextColor(ILI9341_BLACK);
+  display->setTextSize(1);
+  display->setCursor(80, 223);
+  display->setFont(&FreeSerifBold9pt7b);
+  display->print("Page :");
 
   refreshMacroVal();
 }
@@ -708,13 +720,70 @@ void goToMainPage()
   page.itemChanged = true;
 }
 
+
+
+
+void refreshMenuCurser()
+{
+  int start = 66;
+  int gap = 20;
+  int counter = 0;
+  display->fillRect(17, 60, 20, 155, ILI9341_BLACK);
+  display->fillRoundRect(17, start + (gap * page.currentItem), 18, 5, 2,ILI9341_GREENYELLOW);
+}
+
+void createMenuItems(void)
+{
+  int start = 75;
+  int gap = 20;
+  int counter = 0;
+
+  display->fillRoundRect(0, 55, 320, 150, 0, ILI9341_BLACK);
+
+  display->fillRoundRect(135, 210, 150, 20, 10, ILI9341_GREENYELLOW);
+  display->setTextColor(ILI9341_BLACK);
+  display->setTextSize(1);
+  display->setFont(&FreeSerifBold9pt7b);
+  
+  char buffer[10];  
+  sprintf(buffer, "%i / %i", SDCard.curentPage+1, SDCard.pageCount);
+  
+  display->setCursor(140, 223);
+  display->print(buffer);
+
+  int startIndex = SDCard.curentPage * FILE_PER_PAGE;
+  int endIndex = min(startIndex + FILE_PER_PAGE, SDCard.totalFiles);
+  SDCard.curentPageItemCounts = endIndex - startIndex;
+
+  int i = 0;
+  for (auto it = SDCard.items.begin(); it != SDCard.items.end(); ++it, ++i) {
+    if (i < startIndex) continue;
+    if (i >= endIndex) break;
+
+    std::string item = *it;
+    display->setTextColor(ILI9341_WHITE);
+    display->setFont(&FreeSerifBold9pt7b);
+    display->setTextSize(1);
+    display->setCursor(40, start + (gap * counter));
+    display->print(truncateWithEllipsis(item,30).c_str());
+    counter++;
+  }
+  page.itemChanged = true;
+}
+
 void nextMenuItem()
 {
   int resultItem = page.currentItem + 1;
   if (page.currentPage == 2)
   {
-    if (resultItem > SDCard.items.size() - 1)  
+    if(resultItem>= SDCard.curentPageItemCounts)
     {
+      SDCard.curentPage++;
+      
+      if (SDCard.curentPage>= SDCard.pageCount)
+        SDCard.curentPage =0;
+      createMenuItems();
+      
       resultItem = 0;
     }
   }
@@ -733,9 +802,15 @@ void prevMenuItem()
   int resultItem = page.currentItem - 1;
   if (page.currentPage == 2)
   {
-    if (resultItem == -1)
+    if(resultItem<0)
     {
-      resultItem = SDCard.items.size() - 1;
+      SDCard.curentPage--;
+      
+      if (SDCard.curentPage< 0)
+        SDCard.curentPage =SDCard.pageCount-1;
+      createMenuItems();
+      
+      resultItem = SDCard.curentPageItemCounts-1;
     }
   }
   else if (page.currentPage ==3)
@@ -754,7 +829,8 @@ void setMacroItem()
 {
   char buffer[100];
   auto strItem = SDCard.items.begin();
-  std::advance(strItem, page.currentItem);
+  int actualIndex = SDCard.curentPage * FILE_PER_PAGE + page.currentItem;
+  std::advance(strItem, actualIndex);
   sprintf(buffer, "%s", strItem->c_str());
   currentValues.macro = buffer;
 
@@ -779,7 +855,8 @@ void runItem()
 {
   char buffer[100];
   auto strItem = SDCard.items.begin();
-  std::advance(strItem, page.currentItem);
+  int actualIndex = SDCard.curentPage * FILE_PER_PAGE + page.currentItem;
+  std::advance(strItem, actualIndex);
   log_i("run file:%s",strItem->c_str());
   sprintf(buffer, "$SD/RUN=%s", strItem->c_str());
   showMessage(strItem->c_str());
@@ -917,7 +994,7 @@ void refreshMesage(void)
     display->setTextSize(1);
     display->setTextColor(ILI9341_RED);
     display->setCursor(78, 223);
-    display->print(currentValues.message.c_str());
+    display->print(truncateWithEllipsis(currentValues.message,28).c_str());
   }
 }
 
@@ -1024,22 +1101,6 @@ void refresh(void)
   if (currentValues.state == Run)
   {
     refreshProgress();
-  }
-}
-
-void createMenuItems(void)
-{
-  int start = 75;
-  int gap = 20;
-  int counter = 0;
-  for (std::string item : SDCard.items)
-  {
-    display->setTextColor(ILI9341_WHITE);
-    display->setFont(&FreeSerifBold9pt7b);
-    display->setTextSize(1);
-    display->setCursor(40, start + (gap * counter));
-    display->print(item.c_str());
-    counter++;
   }
 }
 
@@ -1150,15 +1211,6 @@ void fillSyncAxisItems()
   SyncAxis.items.push_back("X->A           Y->Z   ");
   SyncAxis.items.push_back("X->Z           Y->none");
   SyncAxis.items.push_back("X->Z           Y->A   ");
-}
-
-void refreshMenuCurser()
-{
-  int start = 66;
-  int gap = 20;
-  int counter = 0;
-  display->fillRect(17, 60, 20, 160, ILI9341_BLACK);
-  display->fillRoundRect(17, start + (gap * page.currentItem), 18, 5, 2,ILI9341_GREENYELLOW);
 }
 
 void displayTask(void *p)
