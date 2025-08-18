@@ -728,7 +728,7 @@ void refreshMenuCurser()
   int start = 66;
   int gap = 20;
   int counter = 0;
-  display->fillRect(17, 60, 20, 155, ILI9341_BLACK);
+  display->fillRect(17, 60, 20, 173, ILI9341_BLACK);
   display->fillRoundRect(17, start + (gap * page.currentItem), 18, 5, 2,ILI9341_GREENYELLOW);
 }
 
@@ -1164,6 +1164,22 @@ void fillCurentValues()
     currentValues.aSyncWith = "";
     break;
   }
+  case 7:
+  {
+    currentValues.xSyncWith = "A";
+    currentValues.aSyncWith = "X";
+    currentValues.ySyncWith = "B";
+    currentValues.bSyncWith = "Y";
+    break;
+  }
+  case 8:
+  {
+    currentValues.xSyncWith = "B";
+    currentValues.aSyncWith = "Y";
+    currentValues.ySyncWith = "A";
+    currentValues.bSyncWith = "X";
+    break;
+  }
   default:
     break;
   }
@@ -1211,6 +1227,8 @@ void fillSyncAxisItems()
   SyncAxis.items.push_back("X->A           Y->Z   ");
   SyncAxis.items.push_back("X->Z           Y->none");
   SyncAxis.items.push_back("X->Z           Y->A   ");
+  SyncAxis.items.push_back("X->A           Y->B   ");
+  SyncAxis.items.push_back("X->B           Y->A   ");
 }
 
 void displayTask(void *p)

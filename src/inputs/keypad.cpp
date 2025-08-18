@@ -106,6 +106,17 @@ String checkSyncAxis(char* command, char* step)
       sprintf(buffer, "$J=G91 G21 A%s%s F%i",sign,step ,currentValues.jogSpeed);
     }
   }
+  else if (isContain(command,"B"))
+  {
+    if (currentValues.aSyncWith != "")
+    {
+      sprintf(buffer, "$J=G91 G21 A%s%s %s%s%s F%i",sign,step ,currentValues.bSyncWith ,sign,step ,currentValues.jogSpeed);
+    }
+    else
+    {
+      sprintf(buffer, "$J=G91 G21 A%s%s F%i",sign,step ,currentValues.jogSpeed);
+    }
+  }
   return String(buffer);
 }
 

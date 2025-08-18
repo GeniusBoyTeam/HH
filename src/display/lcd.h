@@ -65,6 +65,10 @@ struct refreshVal
   bool isASet;
   String aSyncWith;
 
+  std::string b;
+  bool isBSet;
+  String bSyncWith;
+
   std::string feedRate;
   bool isFeedRateSet;
 
