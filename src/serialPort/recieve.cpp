@@ -122,6 +122,7 @@ void setPositions(string MPos)
   lastValues.y = currentValues.y;
   lastValues.z = currentValues.z;
   lastValues.a = currentValues.a;
+  lastValues.b = currentValues.b;
 
   list<string> positionsList = splitString(MPos.c_str(), ",");
   int counter = 0;
@@ -195,6 +196,23 @@ void setPositions(string MPos)
       {
         currentValues.isASet = false;
         log_v("A_CURRENT-->  %s", currentValues.a.c_str());
+      }
+      break;
+    }
+    case 4:
+    {
+      currentValues.b = (positionsList.front()).c_str();
+      String mamad = String(currentValues.b.c_str());
+      double temp = round(mamad.toDouble() * 100.0) / 100.0;
+      char buffer[10];
+      sprintf(buffer, "%.1lf", temp);
+      currentValues.b = buffer;
+
+      int bChange = currentValues.b.compare(lastValues.b);
+      if (bChange != 0)
+      {
+        currentValues.isBSet = false;
+        log_v("B_CURRENT-->  %s", currentValues.b.c_str());
       }
       break;
     }
@@ -273,16 +291,18 @@ void setErrorMessage(string errorMessage)
 }
 
 string enumAlarmMessages[12] = {" None]", " Hard Limit]", " Soft Limit]", " Abort Cycle]", "  Probe Fail Initial]",
-                               " Probe Fail Contact]", " Homing Fail Reset]", " Homing Fail Door]", " Homing Fail Pulloff]", " Homing Fail Approach]", " Spindle Control]"," Unhomed]"};
+                                " Probe Fail Contact]", " Homing Fail Reset]", " Homing Fail Door]", " Homing Fail Pulloff]", " Homing Fail Approach]", " Spindle Control]", " Unhomed]"};
 
-
-int findIndex(const std::string& message) {
-    for (int i = 0; i < 12; i++) {
-        if (enumAlarmMessages[i] == message) {
-            return i;
-        }
+int findIndex(const std::string &message)
+{
+  for (int i = 0; i < 12; i++)
+  {
+    if (enumAlarmMessages[i] == message)
+    {
+      return i;
     }
-    return -1;
+  }
+  return -1;
 }
 
 void setAlarmMessage(string alarmMessage)
@@ -305,12 +325,12 @@ void showMessage(string message)
   currentValues.isMessageShow = false;
 }
 
-const int filesPerPage = 6;     // تعداد فایل در هر صفحه
+const int filesPerPage = 6; // تعداد فایل در هر صفحه
 
 void parseRecieved(string data)
 {
   // example input
-  //<Door:0|MPos:0.000,0.000,0.000,0.000|FS:0,0|Pn:P|WCO:0.000,0.000,0.000,0.000>
+  //<Door:0|MPos:0.000,0.000,0.000,0.000,0.000|FS:0,0|Pn:P|WCO:0.000,0.000,0.000,0.000>
   log_v("RECIEVED: %s", data.c_str());
   if (page.currentPage == 2 && !SDCard.refresh)
   {
@@ -348,7 +368,7 @@ void parseRecieved(string data)
       SDCard.curentPage = 0;
       SDCard.totalFiles = SDCard.items.size();
       SDCard.pageCount = (SDCard.totalFiles + FILE_PER_PAGE - 1) / FILE_PER_PAGE;
-      log_i("Count of file is --> %i",SDCard.totalFiles);
+      log_i("Count of file is --> %i", SDCard.totalFiles);
       SDCard.refresh = true;
     }
   }
@@ -422,7 +442,7 @@ void recieveTask(void *p)
   lastRecievedTime = millis();
   while (true)
   {
-    while (Serial1.available()) 
+    while (Serial1.available())
       parseRecieved(Serial1.readStringUntil('\n').c_str());
 
     vTaskDelay(20);

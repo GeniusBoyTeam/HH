@@ -28,15 +28,32 @@ char *commandMap[6][4] = {
     {"spEnable", "sp-", "sp+", "macro"}};
 #endif
 
+#ifdef ZA_AXIS
+#define AXIS_3_Up_CMD "$J=G91 G21 Z1000"
+#define AXIS_3_Dn_CMD "$J=G91 G21 Z-1000"
+#define AXIS_4_Up_CMD "$J=G91 G21 A1000"
+#define AXIS_4_Dn_CMD "$J=G91 G21 A-1000"
+#elif ZB_AXIS
+#define AXIS_3_Up_CMD "$J=G91 G21 Z1000"
+#define AXIS_3_Dn_CMD "$J=G91 G21 Z-1000"
+#define AXIS_4_Up_CMD "$J=G91 G21 B1000"
+#define AXIS_4_Dn_CMD "$J=G91 G21 B-1000"
+#elif AB_AXIS
+#define AXIS_3_Up_CMD "$J=G91 G21 A1000"
+#define AXIS_3_Dn_CMD "$J=G91 G21 A-1000"
+#define AXIS_4_Up_CMD "$J=G91 G21 B1000"
+#define AXIS_4_Dn_CMD "$J=G91 G21 B-1000"
+#endif
+
 #ifdef KEYPAD_GB
 char *commandMap[6][4] = {
-    {"$J=Y+", "$J=A+", "$J=Z+", "$J=X+"},          // 0
-    {"$J=Z-", "$J=Y-", "", "$J=X-"},               // 1
-    {"$J=A-", "0x92", "0x91", "ctrl-x"},           // 2
-    {"$X", "~", "$H", "nextPage"},                 // 3
-    {"G10 L20 P0 X0 Y0 Z0 A0", "sp+", "sp-", "!"}, // 4
-    {"spEnable", "mist", "fn", "macro"}            // 5
-
+    {"$J=G91 G21 Y3000", AXIS_4_Up_CMD, AXIS_3_Up_CMD,
+     "$J=G91 G21 X3000"},                                          // 0
+    {AXIS_3_Dn_CMD, "$J=G91 G21 Y-3000", "", "$J=G91 G21 X-3000"}, // 1
+    {AXIS_4_Dn_CMD, "0x92", "0x91", "ctrl-x"},                     // 2
+    {"$X", "~", "$H", "nextPage"},                                 // 3
+    {"G10 L20 P0 X0 Y0 Z0 A0", "sp+", "sp-", "!"},                 // 4
+    {"spEnable", "mist", "fn", "macro"}                            // 5
 };
 
 char *commandMapSDCard[6][4] = {
@@ -49,72 +66,72 @@ char *commandMapSDCard[6][4] = {
 };
 
 char *commandMapSync[6][4] = {
-  {"Up", "", "", "Right"},    // 0
-  {"", "Down", "ok", "left"}, // 1
-  {"", "", "", ""},           // 2
-  {"", "", "", "nextPage"},   // 3
-  {"", "", "", ""},           // 4
-  {"", "", "fn", ""}       // 5
+    {"Up", "", "", "Right"},    // 0
+    {"", "Down", "ok", "left"}, // 1
+    {"", "", "", ""},           // 2
+    {"", "", "", "nextPage"},   // 3
+    {"", "", "", ""},           // 4
+    {"", "", "fn", ""}          // 5
 };
 #endif
 
-String checkSyncAxis(char* command, char* step)
+String checkSyncAxis(char *command, char *step)
 {
-  char buffer[50];            
-  String sign = isContain(command,"-") ? "-" : "+";
-  if (isContain(command,"X"))
+  char buffer[50];
+  String sign = isContain(command, "-") ? "-" : "+";
+  if (isContain(command, "X"))
   {
     if (currentValues.xSyncWith != "")
     {
-      sprintf(buffer, "$J=G91 G21 X%s%s %s%s%s F%i",sign,step ,currentValues.xSyncWith,sign ,step ,currentValues.jogSpeed);
+      sprintf(buffer, "$J=G91 G21 X%s%s %s%s%s F%i", sign, step, currentValues.xSyncWith, sign, step, currentValues.jogSpeed);
     }
     else
     {
-      sprintf(buffer, "$J=G91 G21 X%s%s F%i",sign,step ,currentValues.jogSpeed);
+      sprintf(buffer, "$J=G91 G21 X%s%s F%i", sign, step, currentValues.jogSpeed);
     }
   }
-  else if (isContain(command,"Y"))
+  else if (isContain(command, "Y"))
   {
     if (currentValues.ySyncWith != "")
     {
-      sprintf(buffer, "$J=G91 G21 Y%s%s %s%s%s F%i",sign,step ,currentValues.ySyncWith ,sign,step ,currentValues.jogSpeed);
+      sprintf(buffer, "$J=G91 G21 Y%s%s %s%s%s F%i", sign, step, currentValues.ySyncWith, sign, step, currentValues.jogSpeed);
     }
     else
     {
-      sprintf(buffer, "$J=G91 G21 Y%s%s F%i",sign,step ,currentValues.jogSpeed);
+      sprintf(buffer, "$J=G91 G21 Y%s%s F%i", sign, step, currentValues.jogSpeed);
     }
   }
-  else if (isContain(command,"Z"))
+  else if (isContain(command, "Z"))
   {
     if (currentValues.zSyncWith != "")
     {
-      sprintf(buffer, "$J=G91 G21 Z%s%s %s%s%s F%i",sign,step ,currentValues.zSyncWith ,sign,step ,currentValues.jogSpeed);
+      sprintf(buffer, "$J=G91 G21 Z%s%s %s%s%s F%i", sign, step, currentValues.zSyncWith, sign, step, currentValues.jogSpeed);
     }
     else
     {
-      sprintf(buffer, "$J=G91 G21 Z%s%s F%i",sign,step ,currentValues.jogSpeed);
+      sprintf(buffer, "$J=G91 G21 Z%s%s F%i", sign, step, currentValues.jogSpeed);
     }
   }
-  else if (isContain(command,"A"))
+  else if (isContain(command, "A"))
   {
     if (currentValues.aSyncWith != "")
     {
-      sprintf(buffer, "$J=G91 G21 A%s%s %s%s%s F%i",sign,step ,currentValues.aSyncWith ,sign,step ,currentValues.jogSpeed);
+      sprintf(buffer, "$J=G91 G21 A%s%s %s%s%s F%i", sign, step, currentValues.aSyncWith, sign, step, currentValues.jogSpeed);
     }
     else
     {
-      sprintf(buffer, "$J=G91 G21 A%s%s F%i",sign,step ,currentValues.jogSpeed);
+      sprintf(buffer, "$J=G91 G21 A%s%s F%i", sign, step, currentValues.jogSpeed);
     }
   }
-  else if (isContain(command,"B"))
+  else if (isContain(command, "B"))
   {
     if (currentValues.aSyncWith != "")
     {
-      sprintf(buffer, "$J=G91 G21 A%s%s %s%s%s F%i",sign,step ,currentValues.bSyncWith ,sign,step ,currentValues.jogSpeed);
+      sprintf(buffer, "$J=G91 G21 B%s%s %s%s%s F%i", sign, step, currentValues.bSyncWith, sign, step, currentValues.jogSpeed);
     }
     else
     {
-      sprintf(buffer, "$J=G91 G21 A%s%s F%i",sign,step ,currentValues.jogSpeed);
+      sprintf(buffer, "$J=G91 G21 B%s%s F%i", sign, step, currentValues.jogSpeed);
     }
   }
   return String(buffer);
@@ -162,7 +179,7 @@ void keypadTask(void *p)
 
               if (isContain(commandMap[i][j], "$J"))
               {
-                String jogCommand = checkSyncAxis(commandMap[i][j],"2000");
+                String jogCommand = checkSyncAxis(commandMap[i][j], "2000");
                 Serial1.write(jogCommand.c_str());
                 Serial1.write("\n");
                 while (digitalRead(sotoon[j]) == 0)
@@ -302,15 +319,15 @@ void keypadTask(void *p)
                     log_i("M7");
                     Serial1.write("M7");
                     Serial1.write("\n");
-                  } 
-                  else 
+                  }
+                  else
                   {
                     log_i("M9");
                     Serial1.write("M9");
                     Serial1.write("\n");
                   }
                   currentValues.isM7 = !currentValues.isM7;
-                  
+
                   beepBuzzer();
                   while (digitalRead(sotoon[j]) == 0)
                   {
